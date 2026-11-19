@@ -1,161 +1,302 @@
 <!DOCTYPE html><html><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>G-R Service</title><link rel="manifest" href="/static/manifest.json"><meta name="theme-color" content="#0b1026">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>G-R Service</title><link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0b1026">
 <style>
-*{box-sizing:border-box;margin:0;font-family:sans-serif}
-body{background:#0b1026;color:#fff;min-height:100vh;overflow-x:hidden}
-.scr{display:none;min-height:100vh;padding:20px;flex-direction:column;align-items:center}
-.scr.on{display:flex}
-#splash{justify-content:center;text-align:center;background:radial-gradient(circle,#2a1f5c,#0b1026)}
-.logo{font-size:44px;background:linear-gradient(90deg,#ffd76a,#ff8fd8,#7ad7ff);-webkit-background-clip:text;color:transparent;animation:glow 2s infinite alternate}
-@keyframes glow{to{filter:drop-shadow(0 0 14px #ffd76a)}}
-.orn{color:#ffd76a;font-size:26px;margin:14px}
-.w{font-size:22px;margin:8px;opacity:0;animation:f 1.5s forwards}
-.w2{animation-delay:1s}
-@keyframes f{to{opacity:1}}
-h2{margin:10px 0 14px;color:#ffd76a}
-#q{width:100%;padding:12px;border-radius:14px;border:0;font-size:16px;margin-bottom:12px}
-#langs{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.lb{background:#1b2350;border:1px solid #3b4a9a;border-radius:14px;padding:14px;text-align:center;color:#fff;font-size:15px}
-.lb:active{background:#3b4a9a}
-#menu{gap:14px;width:100%}
-.mb{width:100%;max-width:420px;padding:20px;border:0;border-radius:20px;font-size:20px;color:#fff;background:linear-gradient(135deg,#4b3bd6,#c04fd8);box-shadow:0 6px 18px #0008}
-.mb:active{transform:scale(.97)}
-.back{align-self:flex-start;background:none;border:0;color:#ffd76a;font-size:18px;margin-bottom:8px}
-#msgs{flex:1;width:100%;overflow-y:auto;max-height:68vh;display:flex;flex-direction:column;gap:8px}
-.m{padding:10px 14px;border-radius:16px;max-width:85%;white-space:pre-wrap;line-height:1.5}
-.u{background:#4b3bd6;align-self:flex-end}
-.a{background:#1b2350;align-self:flex-start}
-.s{background:#5a1f2a;align-self:center;font-size:13px}
-#bar{display:flex;gap:8px;width:100%;margin-top:10px}
-#in{flex:1;padding:12px;border-radius:14px;border:0;font-size:16px}
-#send{padding:0 18px;border:0;border-radius:14px;background:#ffd76a;font-size:18px}
-.soon{text-align:center;margin-top:60px;font-size:20px;opacity:.8}
+:root{--bg1:#e6edff;--bg2:#f7e8ff;--txt:#1b1f3a;--mut:#5b6080;--glass:rgba(255,255,255,.55);--bd:rgba(255,255,255,.75);--inp:rgba(255,255,255,.8);--acc:#5b5bf0;--acc2:#c04fd8;--sh:rgba(40,40,100,.18)}
+@media(prefers-color-scheme:dark){:root{--bg1:#0b1026;--bg2:#1c1240;--txt:#f2f4ff;--mut:#aab0d6;--glass:rgba(255,255,255,.08);--bd:rgba(255,255,255,.16);--inp:rgba(255,255,255,.1);--sh:rgba(0,0,0,.4)}}
+*{box-sizing:border-box;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{background:linear-gradient(160deg,var(--bg1),var(--bg2)) fixed;color:var(--txt);overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:fl 14s ease-in-out infinite alternate}
+.bg i:nth-child(1){width:60vw;height:60vw;background:#6a5cff;top:-10vw;left:-15vw}
+.bg i:nth-child(2){width:55vw;height:55vw;background:#ff6ad5;bottom:-10vw;right:-15vw;animation-delay:-5s}
+.bg i:nth-child(3){width:40vw;height:40vw;background:#27c5ff;top:40vh;left:30vw;opacity:.35;animation-delay:-9s}
+@keyframes fl{to{transform:translate(8vw,-6vh) scale(1.15)}}
+.scr{display:none;position:relative;z-index:1;min-height:100vh;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px 24px;flex-direction:column;align-items:center}
+.scr.on{display:flex;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.glass{background:var(--glass);border:1px solid var(--bd);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-radius:24px;box-shadow:0 8px 32px var(--sh)}
+.wrap{width:100%;max-width:460px}
+h1,h2{font-weight:700}
+.grad{background:linear-gradient(90deg,#ffb938,#ff6ad5,#4cc9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#splash{justify-content:center;text-align:center;gap:14px;cursor:pointer}
+#splash img{width:150px;height:150px;border-radius:36px;box-shadow:0 14px 40px var(--sh);animation:pop 1s ease}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+#splash .s1,#splash .s2{padding:14px 20px;font-size:19px;opacity:0;animation:fd 1s .5s forwards}
+#splash .s2{animation-delay:1.3s}
+@keyframes fd{to{opacity:1}}
+.top{display:flex;align-items:center;gap:10px;width:100%;max-width:460px;margin-bottom:14px}
+.top h2{flex:1;font-size:20px}
+.ib{width:44px;height:44px;border-radius:15px;border:1px solid var(--bd);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:var(--txt);font-size:20px}
+input,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--bd);background:var(--inp);color:var(--txt);font-size:16px;outline:none}
+input:focus,select:focus{border-color:var(--acc)}
+.btn{padding:13px 18px;border:0;border-radius:16px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-size:16px;font-weight:600;box-shadow:0 6px 18px rgba(91,91,240,.4)}
+.btn:active,.tile:active,.lb:active{transform:scale(.97)}
+.row{display:flex;gap:8px;margin-bottom:8px}
+#langs{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px;margin-top:12px}
+.lb{padding:14px;border-radius:18px;border:1px solid var(--bd);background:var(--glass);color:var(--txt);font-size:15px}
+.hero{display:flex;align-items:center;gap:14px;padding:16px;width:100%;max-width:460px;margin-bottom:16px}
+.hero img{width:60px;height:60px;border-radius:18px}
+.hero b{font-size:22px;display:block}.hero small{color:var(--mut)}
+#tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:460px}
+.tile{aspect-ratio:1/.95;border-radius:26px;border:1px solid var(--bd);background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:var(--txt);font-size:16px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 28px var(--sh)}
+.tile b{font-size:42px;filter:drop-shadow(0 4px 8px var(--sh))}
+.tile:nth-child(5){grid-column:1/3;aspect-ratio:auto;padding:20px;flex-direction:row}
+#msgs{width:100%;max-width:460px;flex:1;max-height:calc(100vh - 190px);overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
+.m{padding:11px 15px;border-radius:20px;max-width:85%;white-space:pre-wrap;line-height:1.55;border:1px solid var(--bd)}
+.m.u{align-self:flex-end;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:0}
+.m.a{align-self:flex-start;background:var(--glass)}
+.dots{display:inline-flex;gap:5px;padding:5px 2px;align-items:center}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--mut);animation:bn 1.2s infinite ease-in-out}
+.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}
+@keyframes bn{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.m{animation:pp .18s ease}@keyframes pp{from{opacity:0;transform:translateY(6px)}}
+.m.s{align-self:center;background:rgba(255,80,100,.2);font-size:13px}
+#bar{display:flex;gap:8px;width:100%;max-width:460px;margin-top:10px}
+.card{padding:16px;margin:8px 0;width:100%}
+.cur{text-align:center;padding:22px;margin:10px 0;background:linear-gradient(135deg,rgba(91,91,240,.45),rgba(192,79,216,.4))}
+.cur .t{font-size:64px;font-weight:200}.cur div{margin:2px}
+.day{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin:6px 0}
+.day .i{font-size:26px}.day span{flex:1;text-align:center}.day span:first-child{text-align:start}.day span:last-child{text-align:end}
+.tip{padding:12px 14px;margin:6px 0;font-size:14px;line-height:1.5}
+.pr{display:flex;justify-content:space-between;padding:15px 18px;margin:7px 0;font-size:18px}
+.pr.nx{background:linear-gradient(135deg,rgba(91,91,240,.6),rgba(192,79,216,.55));color:#fff}
+.it{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;margin:7px 0}
+.it b{font-size:26px;font-weight:300;display:block}.it small{color:var(--mut)}
+.it button{border:0;background:none;font-size:22px}
+.h3{margin:14px 4px 6px;font-size:16px;color:var(--mut)}
+#ring{position:fixed;inset:0;z-index:50;background:rgba(10,10,40,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px}
+#ring.on{display:flex}#ring .glass{padding:30px;text-align:center;width:100%;max-width:340px}
+#ring .e{font-size:64px;animation:sh .6s infinite}@keyframes sh{50%{transform:rotate(14deg)}}
 
-#wf{width:100%;max-width:440px}
-.wrow{display:flex;gap:8px;margin-bottom:8px}
-.wrow input{flex:1;padding:12px;border-radius:14px;border:0;font-size:16px}
-.wrow button{padding:0 16px;border:0;border-radius:14px;background:#ffd76a;font-size:16px}
-.wcur{background:linear-gradient(135deg,#1e3c72,#2a5298);border-radius:22px;padding:20px;text-align:center;margin:10px 0}
-.wcur .t{font-size:56px;font-weight:300}
-.wcur .d{font-size:18px;opacity:.9}
-.wday{display:flex;align-items:center;justify-content:space-between;background:#1b2350;border-radius:14px;padding:10px 14px;margin:6px 0}
-.wday .i{font-size:26px}
-.tip{background:#2a1f5c;border-radius:14px;padding:12px;margin:6px 0;font-size:14px;line-height:1.5}
-#pf{width:100%;max-width:440px}.prow{display:flex;justify-content:space-between;background:#1b2350;border-radius:14px;padding:14px;margin:6px 0;font-size:18px}.prow.nx{background:linear-gradient(135deg,#4b3bd6,#c04fd8)}.pbtn{width:100%;padding:12px;border:0;border-radius:14px;background:#ffd76a;font-size:16px;margin:6px 0}#pb{width:100%;padding:12px;border-radius:14px;border:0;font-size:16px;margin:6px 0}</style></head><body>
+#msgs{gap:20px;padding:4px 2px 12px;max-height:calc(100vh - 175px)}
+#msgs .m{max-width:100%;font-size:16px;line-height:1.7;padding:0 4px;border:0;border-radius:0;background:none;color:var(--txt);animation:pp .18s ease}
+#msgs .m.u{align-self:flex-end;max-width:85%;padding:10px 16px;border-radius:22px;background:var(--inp);border:1px solid var(--bd)}
+#msgs .m.a{align-self:stretch}
+#msgs .m.s{align-self:center;color:#e5484d;font-size:13px}
+#msgs .m img{display:block;max-width:100%;max-height:230px;border-radius:16px;margin-bottom:8px}
+#cbox{width:100%;max-width:460px;margin-top:6px}
+#comp{display:flex;align-items:flex-end;gap:6px;padding:7px;border-radius:30px;background:var(--glass);border:1px solid var(--bd);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 8px 28px var(--sh)}
+#comp:focus-within{border-color:var(--acc)}
+#in{flex:1;min-width:0;border:0;background:none;resize:none;max-height:140px;padding:10px 4px;font-size:16px;line-height:1.4;color:var(--txt);outline:none}
+#in::placeholder{color:var(--mut)}
+.cb{width:42px;height:42px;border-radius:50%;border:0;flex:none;font-size:22px;display:flex;align-items:center;justify-content:center}
+#attb{background:var(--inp);color:var(--txt)}
+#send{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:700;transition:opacity .15s}
+#send:disabled{opacity:.35}
+#prev{display:none;padding:0 4px 8px}
+#prev.on{display:block}
+.pv{position:relative;display:inline-block}
+.pv img{width:68px;height:68px;object-fit:cover;border-radius:16px;border:1px solid var(--bd);display:block}
+.pv button{position:absolute;top:-7px;inset-inline-end:-7px;width:24px;height:24px;border-radius:50%;border:0;background:#222;color:#fff;font-size:14px;line-height:1}
+</style></head><body>
+<div class="bg"><i></i><i></i><i></i></div>
 
-<div id="splash" class="scr on">
-<div class="orn">✦ ❖ ✦</div>
-<div class="logo">𝓖 - 𝓡 &nbsp;𝓢𝓮𝓻𝓿𝓲𝓬𝓮</div>
-<div class="orn">❖ ✦ ❖</div>
-<div class="w">L'équipe G-R Service vous souhaite la bienvenue</div>
-<div class="w w2">فريق G-R Service يرحب بكم</div>
-</div>
+<section id="splash" class="scr on">
+<img src="/static/i512.png" alt="">
+<div class="glass s1">L'équipe <b class="grad">G-R Service</b> vous souhaite la bienvenue</div>
+<div class="glass s2">فريق <b class="grad">G-R Service</b> يرحب بكم</div>
+</section>
 
-<div id="lang" class="scr">
-<h2>🌍 Language / اللغة / Langue</h2>
-<input id="q" placeholder="🔍 ...">
+<section id="lang" class="scr">
+<div class="top"><h2>🌍 Language / اللغة / Langue</h2></div>
+<div class="wrap"><input id="q" placeholder="🔍"></div>
 <div id="langs"></div>
-</div>
+</section>
 
-<div id="home" class="scr">
-<div class="logo" style="font-size:30px;margin:10px">𝓖 - 𝓡 𝓢𝓮𝓻𝓿𝓲𝓬𝓮</div>
-<div id="menu" class="scr on" style="min-height:0;padding:10px;align-items:center">
-<button class="mb" data-go="alarm"></button>
-<button class="mb" data-go="remind"></button>
-<button class="mb" data-go="weather"></button>
-<button class="mb" data-go="chat"></button>
-<button class="mb" data-go="prayer"></button>
-</div></div>
+<section id="home" class="scr">
+<div class="glass hero"><img src="/static/i512.png" alt=""><div><b class="grad">G-R Service</b><small id="sub"></small></div><button class="ib" id="chg" style="margin-inline-start:auto">🌍</button></div>
+<div id="tiles">
+<button class="tile" data-go="alarm"><b>⏰</b><span data-t="alarm"></span></button>
+<button class="tile" data-go="remind"><b>🔔</b><span data-t="remind"></span></button>
+<button class="tile" data-go="weather"><b>🌤️</b><span data-t="weather"></span></button>
+<button class="tile" data-go="chat"><b>🤖</b><span data-t="chat"></span></button>
+<button class="tile" data-go="prayer"><b>🕌</b><span data-t="prayer"></span></button>
+</div></section>
 
-<div id="chat" class="scr">
-<button class="back" onclick="show('home')">←</button>
+<section id="chat" class="scr">
+<div class="top"><button class="ib" data-back>←</button><h2 data-t="chat"></h2></div>
 <div id="msgs"></div>
-<div id="bar"><input id="in"><button id="send">➤</button></div>
-</div>
+<div id="cbox"><div id="prev"></div><div id="comp"><button class="cb" id="attb" aria-label="image">＋</button><textarea id="in" rows="1"></textarea><button class="cb" id="send" disabled>↑</button></div></div>
+<input type="file" id="file" accept="image/*" hidden>
+</section>
 
+<section id="weather" class="scr">
+<div class="top"><button class="ib" data-back>←</button><h2 data-t="weather"></h2></div>
+<div class="wrap">
+<div class="row"><input id="wc" data-p="country"></div>
+<div class="row"><input id="wr" data-p="city"><button class="btn" id="wgo">🔍</button></div>
+<div id="wout"></div></div></section>
 
-<div id="weather" class="scr">
-<button class="back" onclick="show('home')">←</button>
-<div id="wf">
-<div class="wrow"><input id="wc" placeholder="Pays / البلد"></div>
-<div class="wrow"><input id="wr" placeholder="Ville / المنطقة"><button id="wgo">🔍</button></div>
-<div id="wout"></div>
-</div></div>
-<div id="prayer" class="scr"><button class="back" onclick="show('home')">←</button><div id="pf"><div class="wrow"><input id="pc" placeholder="Pays / البلد"></div><div class="wrow"><input id="pr" placeholder="Ville / المدينة"><button id="pgo">🔍</button></div><select id="pb"><option value="0">0 min</option><option value="5">5 min</option><option value="10" selected>10 min</option><option value="15">15 min</option><option value="30">30 min</option></select><button class="pbtn" id="pn">🔔 تفعيل الإشعارات / Notifications</button><div id="pout"></div></div></div><div id="soon" class="scr">
-<button class="back" onclick="show('home')">←</button>
-<div class="soon" id="soont"></div>
-</div>
+<section id="prayer" class="scr">
+<div class="top"><button class="ib" data-back>←</button><h2 data-t="prayer"></h2></div>
+<div class="wrap">
+<div class="row"><input id="pc" data-p="country"></div>
+<div class="row"><input id="pr" data-p="city"><button class="btn" id="pgo">🔍</button></div>
+<div class="row"><select id="pb"><option value="0">0</option><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="30">30</option></select></div>
+<div class="row"><button class="btn" id="pn" style="width:100%" data-t="notif"></button></div>
+<div id="pout"></div></div></section>
+
+<section id="alarm" class="scr">
+<div class="top"><button class="ib" data-back>←</button><h2 data-t="alarm"></h2></div>
+<div class="wrap">
+<div class="glass card"><div class="row"><input type="time" id="at" value="07:00"></div>
+<div class="row"><input id="al" data-p="label"></div>
+<button class="btn" id="aadd" style="width:100%" data-t="add"></button></div>
+<div id="alist"></div><p class="h3" data-t="note"></p></div></section>
+
+<section id="remind" class="scr">
+<div class="top"><button class="ib" data-back>←</button><h2 data-t="remind"></h2></div>
+<div class="wrap">
+<div class="glass card"><div class="row"><input type="datetime-local" id="rt"></div>
+<div class="row"><input id="rl" data-p="label"></div>
+<button class="btn" id="radd" style="width:100%" data-t="add"></button></div>
+<div id="rlist"></div><p class="h3" data-t="note"></p></div></section>
+
+<div id="ring"><div class="glass"><div class="e">⏰</div><h2 id="rtx" style="margin:12px 0 20px"></h2><button class="btn" id="rstop" data-t="stop"></button></div></div>
 
 <script>
 const L=[["ar","العربية"],["fr","Français"],["en","English"],["es","Español"],["pt","Português"],["de","Deutsch"],["it","Italiano"],["nl","Nederlands"],["ru","Русский"],["uk","Українська"],["pl","Polski"],["cs","Čeština"],["ro","Română"],["el","Ελληνικά"],["tr","Türkçe"],["fa","فارسی"],["ur","اردو"],["he","עברית"],["hi","हिन्दी"],["bn","বাংলা"],["pa","ਪੰਜਾਬੀ"],["ta","தமிழ்"],["te","తెలుగు"],["mr","मराठी"],["gu","ગુજરાતી"],["ne","नेपाली"],["si","සිංහල"],["th","ไทย"],["vi","Tiếng Việt"],["id","Bahasa Indonesia"],["ms","Bahasa Melayu"],["tl","Filipino"],["zh","中文"],["ja","日本語"],["ko","한국어"],["sw","Kiswahili"],["am","አማርኛ"],["ha","Hausa"],["yo","Yorùbá"],["zu","isiZulu"],["af","Afrikaans"],["so","Soomaali"],["sv","Svenska"],["no","Norsk"],["da","Dansk"],["fi","Suomi"],["hu","Magyar"],["bg","Български"],["sr","Српски"],["hr","Hrvatski"],["sk","Slovenčina"],["sq","Shqip"],["hy","Հայերեն"],["ka","ქართული"],["az","Azərbaycan"],["kk","Қазақша"],["uz","Oʻzbekcha"],["ku","Kurdî"],["ps","پښتو"],["my","မြန်မာ"],["km","ខ្មែរ"],["mn","Монгол"],["ca","Català"],["eu","Euskara"],["is","Íslenska"],["ga","Gaeilge"],["tzm","ⵜⴰⵎⴰⵣⵉⵖⵜ"]];
 const T={
-ar:{alarm:"⏰ المنبه",remind:"🔔 تذكير بإشعار",weather:"🌤️ الطقس",chat:"🤖 دردشة مع الذكاء",prayer:"🕌 أوقات الصلاة",ph:"اكتب رسالتك...",soon:"قريبًا ✨",bad:"⚠️ هذه الكلمات غير مسموحة.",err:"تعذّر الاتصال"},
-fr:{alarm:"⏰ Réveil",remind:"🔔 Rappel",weather:"🌤️ Météo",chat:"🤖 Chat IA",prayer:"🕌 Heures de prière",ph:"Écrivez votre message...",soon:"Bientôt ✨",bad:"⚠️ Ces mots ne sont pas autorisés.",err:"Connexion impossible"},
-en:{alarm:"⏰ Alarm",remind:"🔔 Reminder",weather:"🌤️ Weather",chat:"🤖 AI Chat",prayer:"🕌 Prayer Times",ph:"Type your message...",soon:"Coming soon ✨",bad:"⚠️ These words are not allowed.",err:"Connection failed"}};
+ar:{alarm:"المنبه",remind:"تذكير بإشعار",weather:"الطقس",chat:"دردشة مع الذكاء",prayer:"أوقات الصلاة",sub:"خدماتك في مكان واحد",country:"البلد (مثل Algeria)",city:"المدينة / المنطقة",ph:"اكتب رسالتك...",bad:"⚠️ هذه الكلمات غير مسموحة.",err:"تعذّر الاتصال",nf:"❌ غير موجود",notif:"🔔 تفعيل الإشعارات",add:"➕ إضافة",label:"الوصف (اختياري)",stop:"إيقاف",note:"⚠️ يعمل بشكل أفضل والتطبيق مفتوح.",cl:"صافٍ",pc:"غائم جزئيًا",cd:"غائم",fg:"ضباب",dz:"رذاذ",rn:"مطر",sn:"ثلج",st:"عاصفة",tHot:"🥵 حرارة مرتفعة: اشرب الماء كثيرًا وتجنب الشمس وقت الظهيرة.",tCold:"🧥 برد: ارتدِ ملابس دافئة.",tRain:"☔ أمطار متوقعة: احمل مظلة.",tStorm:"⛈️ عواصف محتملة: تجنب الخروج غير الضروري.",tUv:"🕶️ أشعة UV عالية: استعمل واقي الشمس.",tOk:"👍 طقس معتدل طوال الأسبوع.",tips:"💡 نصائح الأسبوع",pnow:"حان الآن وقت الصلاة",pbef:"بعد {n} دقيقة",denied:"تم رفض الإشعارات",bmin:"دقيقة قبل الصلاة",Fajr:"الفجر",Dhuhr:"الظهر",Asr:"العصر",Maghrib:"المغرب",Isha:"العشاء"},
+fr:{alarm:"Réveil",remind:"Rappel",weather:"Météo",chat:"Chat IA",prayer:"Heures de prière",sub:"Vos services au même endroit",country:"Pays (ex. Algeria)",city:"Ville / région",ph:"Écrivez votre message...",bad:"⚠️ Ces mots ne sont pas autorisés.",err:"Connexion impossible",nf:"❌ Introuvable",notif:"🔔 Activer les notifications",add:"➕ Ajouter",label:"Description (facultatif)",stop:"Arrêter",note:"⚠️ Fonctionne mieux application ouverte.",cl:"Dégagé",pc:"Peu nuageux",cd:"Couvert",fg:"Brouillard",dz:"Bruine",rn:"Pluie",sn:"Neige",st:"Orage",tHot:"🥵 Forte chaleur : buvez beaucoup d'eau, évitez le soleil à midi.",tCold:"🧥 Froid : habillez-vous chaudement.",tRain:"☔ Pluie prévue : prenez un parapluie.",tStorm:"⛈️ Orages possibles : évitez les sorties inutiles.",tUv:"🕶️ UV élevé : utilisez de la crème solaire.",tOk:"👍 Temps agréable toute la semaine.",tips:"💡 Conseils de la semaine",pnow:"C'est l'heure de la prière",pbef:"Dans {n} min",denied:"Notifications refusées",bmin:"min avant la prière"},
+en:{alarm:"Alarm",remind:"Reminder",weather:"Weather",chat:"AI Chat",prayer:"Prayer Times",sub:"Your services in one place",country:"Country (e.g. Algeria)",city:"City / region",ph:"Type your message...",bad:"⚠️ These words are not allowed.",err:"Connection failed",nf:"❌ Not found",notif:"🔔 Enable notifications",add:"➕ Add",label:"Label (optional)",stop:"Stop",note:"⚠️ Works best while the app is open.",cl:"Clear",pc:"Partly cloudy",cd:"Cloudy",fg:"Fog",dz:"Drizzle",rn:"Rain",sn:"Snow",st:"Storm",tHot:"🥵 Very hot: drink lots of water, avoid midday sun.",tCold:"🧥 Cold: dress warmly.",tRain:"☔ Rain expected: take an umbrella.",tStorm:"⛈️ Possible storms: avoid unnecessary trips.",tUv:"🕶️ High UV: use sunscreen.",tOk:"👍 Pleasant weather all week.",tips:"💡 Weekly tips",pnow:"It's prayer time",pbef:"In {n} min",denied:"Notifications denied",bmin:"min before prayer"}};
 const RTL=["ar","fa","ur","he","ps","ku"];
 let lang=localStorage.getItem("lang")||"";
 const $=i=>document.getElementById(i);
-function show(id){document.querySelectorAll(".scr").forEach(e=>{if(e.id!="menu")e.classList.remove("on")});$(id).classList.add("on")}
-function tr(k){return (T[lang]||T.en)[k]}
-function apply(){document.documentElement.dir=RTL.includes(lang)?"rtl":"ltr";
-document.querySelectorAll(".mb").forEach(b=>b.textContent=tr(b.dataset.go));$("in").placeholder=tr("ph")}
+const tr=k=>((T[lang]||{})[k])||T.fr[k]&&lang=="fr"&&T.fr[k]||T.en[k]||k;
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+function show(id){document.querySelectorAll(".scr").forEach(e=>e.classList.remove("on"));$(id).classList.add("on");window.scrollTo(0,0)}
+function apply(){
+document.documentElement.dir=RTL.includes(lang)?"rtl":"ltr";document.documentElement.lang=lang||"en";
+document.querySelectorAll("[data-t]").forEach(e=>e.textContent=tr(e.dataset.t));
+document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=tr(e.dataset.p));
+$("in").placeholder=tr("ph");$("sub").textContent=tr("sub");renderA();renderR()}
 function drawLangs(f=""){$("langs").innerHTML="";L.filter(x=>(x[1]+x[0]).toLowerCase().includes(f.toLowerCase())).forEach(x=>{
 const b=document.createElement("button");b.className="lb";b.textContent=x[1];
 b.onclick=()=>{lang=x[0];localStorage.setItem("lang",lang);apply();show("home")};$("langs").appendChild(b)})}
-$("q").oninput=e=>drawLangs(e.target.value);
-drawLangs();
-document.querySelectorAll(".mb").forEach(b=>b.onclick=()=>{
-const g=b.dataset.go;if(g=="chat"){show("chat")}else if(g=="weather"){show("weather")}else if(g=="prayer"){show("prayer")}else{$("soont").textContent=b.textContent+"\n\n"+tr("soon");show("soon")}});
-const BAD=["fuck","shit","bitch","merde","putain","connard","شرموط","زب","كس","قحبة","عاهرة","منيك","ابن الكلب"];
-function bad(t){t=t.toLowerCase();return BAD.some(w=>t.includes(w))}
-let hist=[];
-function add(c,t){const d=document.createElement("div");d.className="m "+c;d.textContent=t;$("msgs").appendChild(d);$("msgs").scrollTop=1e9;return d}
-async function send(){const t=$("in").value.trim();if(!t)return;$("in").value="";add("u",t);
-if(bad(t)){add("s",tr("bad"));return}
-hist.push({role:"user",content:t});
-const w=add("a","...");
-try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},
-body:JSON.stringify({messages:[{role:"system",content:"Reply in the user's language, politely and clearly. Language code: "+lang}].concat(hist)})});
-const j=await r.json();
-if(j.blocked){w.className="m s";w.textContent=tr("bad");hist.pop();return}
-if(j.reply){w.textContent=j.reply;hist.push({role:"assistant",content:j.reply})}else w.textContent=tr("err")
-}catch(e){w.textContent=tr("err")}}
-$("send").onclick=send;$("in").onkeydown=e=>{if(e.key=="Enter")send()};
+$("q").oninput=e=>drawLangs(e.target.value);drawLangs();
+$("chg").onclick=()=>show("lang");
+document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>show("home"));
+document.querySelectorAll(".tile").forEach(b=>b.onclick=()=>show(b.dataset.go));
 
-const WC={0:["☀️","Clair"],1:["🌤️","Peu nuageux"],2:["⛅","Nuageux"],3:["☁️","Couvert"],45:["🌫️","Brouillard"],48:["🌫️","Brouillard"],51:["🌦️","Bruine"],53:["🌦️","Bruine"],55:["🌦️","Bruine"],61:["🌧️","Pluie"],63:["🌧️","Pluie"],65:["🌧️","Forte pluie"],71:["❄️","Neige"],73:["❄️","Neige"],75:["❄️","Neige"],80:["🌦️","Averses"],81:["🌧️","Averses"],82:["⛈️","Fortes averses"],95:["⛈️","Orage"],96:["⛈️","Orage"],99:["⛈️","Orage"]};
-function wi(c){return WC[c]||["🌡️","-"]}
-function tips(d,l){
-const out=[];const mx=Math.max(...d.temperature_2m_max),mn=Math.min(...d.temperature_2m_min);
-const rain=d.precipitation_probability_max.some(x=>x>=50),storm=d.weather_code.some(x=>x>=95),uv=Math.max(...d.uv_index_max);
-const ar=l=="ar";
-if(mx>=35)out.push(ar?"🥵 حرارة مرتفعة: اشرب الماء كثيرًا وتجنب الشمس وقت الظهيرة.":"🥵 Forte chaleur : buvez beaucoup d'eau, évitez le soleil à midi.");
-if(mn<=5)out.push(ar?"🧥 برد: ارتدِ ملابس دافئة.":"🧥 Froid : habillez-vous chaudement.");
-if(rain)out.push(ar?"☔ أمطار متوقعة: احمل مظلة.":"☔ Pluie prévue : prenez un parapluie.");
-if(storm)out.push(ar?"⛈️ عواصف محتملة: تجنب الخروج غير الضروري.":"⛈️ Orages possibles : évitez les sorties inutiles.");
-if(uv>=7)out.push(ar?"🕶️ أشعة UV عالية: استعمل واقي الشمس.":"🕶️ UV élevé : utilisez de la crème solaire.");
-if(!out.length)out.push(ar?"👍 طقس معتدل طوال الأسبوع.":"👍 Temps agréable toute la semaine.");
-return out}
+/* ---------- notifications / ring ---------- */
+let ac=null,ringT=null;
+document.addEventListener("click",()=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){}},{once:true});
+if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
+async function notify(t,b){
+try{const r=await navigator.serviceWorker.getRegistration();if(r){await r.showNotification(t,{body:b,vibrate:[300,150,300]});return}}catch(e){}
+try{new Notification(t,{body:b})}catch(e){}}
+function beep(){try{if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.value=.25;o.start();o.stop(ac.currentTime+.25)}catch(e){}if(navigator.vibrate)navigator.vibrate([300,150,300])}
+function fire(icon,txt){notify(icon+" G-R Service",txt);$("rtx").textContent=txt;document.querySelector("#ring .e").textContent=icon;$("ring").classList.add("on");clearInterval(ringT);beep();ringT=setInterval(beep,900)}
+$("rstop").onclick=()=>{clearInterval(ringT);$("ring").classList.remove("on")};
+$("pn").onclick=async()=>{try{const p=await Notification.requestPermission();if(p=="granted"){notify("🕌 G-R Service","✅ OK");schedule()}else alert(tr("denied"))}catch(e){alert(tr("denied"))}};
+
+/* ---------- alarm + reminder ---------- */
+const p2=n=>String(n).padStart(2,"0");
+function renderA(){const a=ld("alarms");$("alist").innerHTML="";a.forEach((x,i)=>{const d=document.createElement("div");d.className="glass it";
+d.innerHTML='<div><b>'+x.hm+'</b><small>'+(x.label||"")+'</small></div><div><input type="checkbox" '+(x.on?"checked":"")+' style="width:24px;height:24px"> <button>🗑️</button></div>';
+d.querySelector("input").onchange=e=>{a[i].on=e.target.checked;sv("alarms",a)};
+d.querySelector("button").onclick=()=>{a.splice(i,1);sv("alarms",a);renderA()};$("alist").appendChild(d)})}
+function renderR(){const a=ld("rems");$("rlist").innerHTML="";a.forEach((x,i)=>{const d=document.createElement("div");d.className="glass it";
+d.innerHTML='<div><b style="font-size:18px">'+(x.label||"🔔")+'</b><small>'+new Date(x.at).toLocaleString(lang||"en")+(x.done?" ✓":"")+'</small></div><button>🗑️</button>';
+d.querySelector("button").onclick=()=>{a.splice(i,1);sv("rems",a);renderR()};$("rlist").appendChild(d)})}
+$("aadd").onclick=()=>{const a=ld("alarms");if(!$("at").value)return;a.push({hm:$("at").value,label:$("al").value.trim(),on:true});sv("alarms",a);$("al").value="";renderA()};
+$("radd").onclick=()=>{const a=ld("rems"),t=new Date($("rt").value).getTime();if(!t)return;a.push({at:t,label:$("rl").value.trim(),done:false});sv("rems",a);$("rl").value="";renderR()};
+setInterval(()=>{const n=new Date(),hm=p2(n.getHours())+":"+p2(n.getMinutes()),key=n.toDateString()+hm;
+const a=ld("alarms");let ch=false;a.forEach(x=>{if(x.on&&x.hm==hm&&x.last!=key){x.last=key;ch=true;fire("⏰",x.label||hm)}});if(ch)sv("alarms",a);
+const r=ld("rems");ch=false;r.forEach(x=>{if(!x.done&&x.at<=Date.now()){x.done=true;ch=true;fire("🔔",x.label||"🔔")}});if(ch){sv("rems",r);renderR()}},5000);
+
+/* ---------- chat ---------- */
+const BAD=["fuck","shit","bitch","merde","putain","connard","شرموط","زب","كس","قحبة","عاهرة","منيك","ابن الكلب"];
+const bad=t=>{t=t.toLowerCase();return BAD.some(w=>t.includes(w))};
+let hist=[],busy=false,pic=null;
+const SYS="You are a serious, precise assistant. Answer directly and briefly (1-4 sentences) unless asked for more. No filler, no emojis. You can see images the user sends. Reply in the user's language. Language code: ";
+function add(c,t,img){const d=document.createElement("div");d.className="m "+c;if(img){const i=document.createElement("img");i.src=img;d.appendChild(i)}if(t){const s=document.createElement("span");s.textContent=t;d.appendChild(s)}$("msgs").appendChild(d);$("msgs").scrollTop=1e9;return d}
+function upd(){$("send").disabled=busy||!($("in").value.trim()||pic)}
+function shrink(f){return new Promise(r=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1024/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL("image/jpeg",.8))};im.onerror=()=>r(null);im.src=u})}
+function drawPrev(){const p=$("prev");if(!pic){p.className="";p.innerHTML="";return}p.className="on";p.innerHTML='<div class="pv"><img src="'+pic+'"><button>×</button></div>';p.querySelector("button").onclick=()=>{pic=null;drawPrev();upd()}}
+$("attb").onclick=()=>$("file").click();
+$("file").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;pic=await shrink(f);drawPrev();upd()};
+$("in").oninput=()=>{$("in").style.height="auto";$("in").style.height=Math.min(140,$("in").scrollHeight)+"px";upd()};
+$("in").onkeydown=e=>{if(e.key=="Enter"&&!e.shiftKey&&matchMedia("(pointer:fine)").matches){e.preventDefault();send()}};
+async function send(){
+if(busy)return;const t=$("in").value.trim();if(!t&&!pic)return;
+if(t&&bad(t)){$("in").value="";$("in").style.height="auto";add("s",tr("bad"));upd();return}
+const img=pic;$("in").value="";$("in").style.height="auto";pic=null;drawPrev();
+add("u",t,img);busy=true;upd();
+hist.push({role:"user",content:img?[{type:"text",text:t||"Describe this image."},{type:"image_url",image_url:{url:img}}]:t});
+const w=add("a","");w.innerHTML='<span class="dots"><i></i><i></i><i></i></span>';
+const prep=hist.slice(-8).map((m,i,a)=>(Array.isArray(m.content)&&i<a.length-1)?{role:m.role,content:m.content[0].text}:m);
+const body=JSON.stringify({messages:[{role:"system",content:SYS+lang}].concat(prep)});
+let out="";
+try{
+const r=await fetch("/api/stream",{method:"POST",headers:{"Content-Type":"application/json"},body:body});
+const ct=r.headers.get("content-type")||"";
+if(ct.includes("json")){const j=await r.json();if(j.blocked){w.className="m s";w.textContent=tr("bad");hist.pop();busy=false;upd();return}}
+else{const rd=r.body.getReader(),dc=new TextDecoder();
+while(true){const x=await rd.read();if(x.done)break;const c=dc.decode(x.value,{stream:true});
+if(c.includes("\u0000ERR"))break;
+if(!out)w.textContent="";out+=c;w.textContent=out;$("msgs").scrollTop=1e9}}
+if(!out){const r2=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:body});const j=await r2.json();if(j.reply)out=j.reply;w.textContent=out||tr("err")}
+if(out)hist.push({role:"assistant",content:out});else hist.pop();
+}catch(x){w.textContent=out||tr("err");if(!out)hist.pop()}
+busy=false;upd()}
+$("send").onclick=send;
+
+/* ---------- weather ---------- */
+const WK=c=>c==0?["☀️","cl"]:c<3?["⛅","pc"]:c==3?["☁️","cd"]:c<50?["🌫️","fg"]:c<60?["🌦️","dz"]:c<70?["🌧️","rn"]:c<80?["❄️","sn"]:c<90?["🌧️","rn"]:["⛈️","st"];
 async function weather(){
 const c=$("wc").value.trim(),r=$("wr").value.trim();if(!r&&!c)return;
-$("wout").innerHTML="⏳ ...";
+$("wout").textContent="⏳ ...";
 try{
-let g=await (await fetch("https://geocoding-api.open-meteo.com/v1/search?count=10&name="+encodeURIComponent(r||c))).json();
+const gl=["ar","fr"].includes(lang)?lang:"en";
+let g=await (await fetch("https://geocoding-api.open-meteo.com/v1/search?count=10&language="+gl+"&name="+encodeURIComponent(r||c))).json();
 let res=g.results||[];
-if(c&&r){const f=res.filter(x=>(x.country||"").toLowerCase().includes(c.toLowerCase())||(x.admin1||"").toLowerCase().includes(c.toLowerCase()));if(f.length)res=f}
-if(!res.length){$("wout").textContent="❌ Introuvable / غير موجود";return}
+if(c&&r){const f=res.filter(x=>((x.country||"")+" "+(x.admin1||"")).toLowerCase().includes(c.toLowerCase())||(x.country_code||"").toLowerCase()==c.toLowerCase());if(f.length)res=f}
+if(!res.length){$("wout").textContent=tr("nf");return}
 const p=res[0];
 const w=await (await fetch("https://api.open-meteo.com/v1/forecast?latitude="+p.latitude+"&longitude="+p.longitude+"&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto&forecast_days=7")).json();
-const cu=w.current,d=w.daily,cw=wi(cu.weather_code);
-const ar=lang=="ar";
-const days=ar?["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
-let h='<div class="wcur"><div class="d">📍 '+p.name+(p.country?", "+p.country:"")+'</div><div class="t">'+Math.round(cu.temperature_2m)+'°</div><div class="d">'+cw[0]+" "+cw[1]+'</div><div class="d">💧 '+cu.relative_humidity_2m+'%  💨 '+Math.round(cu.wind_speed_10m)+' km/h</div></div>';
-d.time.forEach((t,i)=>{const x=wi(d.weather_code[i]);h+='<div class="wday"><span>'+days[new Date(t).getDay()]+'</span><span class="i">'+x[0]+'</span><span>💧'+(d.precipitation_probability_max[i]||0)+'%</span><span>'+Math.round(d.temperature_2m_max[i])+'° / '+Math.round(d.temperature_2m_min[i])+'°</span></div>'});
-h+='<h2 style="font-size:17px;margin-top:14px">'+(ar?"💡 نصائح الأسبوع":"💡 Conseils de la semaine")+'</h2>';
-tips(d,lang).forEach(x=>h+='<div class="tip">'+x+'</div>');
-$("wout").innerHTML=h;
-}catch(e){$("wout").textContent=tr("err")}}
+sv("wcity",{c:c,r:r});
+const cu=w.current,d=w.daily,k=WK(cu.weather_code);
+let h='<div class="glass cur"><div>📍 '+p.name+(p.country?", "+p.country:"")+'</div><div class="t">'+Math.round(cu.temperature_2m)+'°</div><div style="font-size:20px">'+k[0]+" "+tr(k[1])+'</div><div>💧 '+cu.relative_humidity_2m+'%  💨 '+Math.round(cu.wind_speed_10m)+' km/h</div></div>';
+d.time.forEach((t,i)=>{const x=WK(d.weather_code[i]);h+='<div class="glass day"><span>'+new Date(t+"T12:00").toLocaleDateString(lang||"en",{weekday:"short"})+'</span><span class="i">'+x[0]+'</span><span>💧'+(d.precipitation_probability_max[i]||0)+'%</span><span>'+Math.round(d.temperature_2m_max[i])+'° / '+Math.round(d.temperature_2m_min[i])+'°</span></div>'});
+const o=[],mx=Math.max(...d.temperature_2m_max),mn=Math.min(...d.temperature_2m_min);
+if(mx>=35)o.push("tHot");if(mn<=5)o.push("tCold");if(d.precipitation_probability_max.some(x=>x>=50))o.push("tRain");if(d.weather_code.some(x=>x>=95))o.push("tStorm");if(Math.max(...d.uv_index_max)>=7)o.push("tUv");if(!o.length)o.push("tOk");
+h+='<p class="h3">'+tr("tips")+'</p>';o.forEach(x=>h+='<div class="glass tip">'+tr(x)+'</div>');
+$("wout").innerHTML=h}catch(e){$("wout").textContent=tr("err")}}
 $("wgo").onclick=weather;$("wr").onkeydown=e=>{if(e.key=="Enter")weather()};
-</script><script src="/static/prayer.js"></script><script>apply();
-setTimeout(()=>show(lang?"home":"lang"),4000);
+try{const s=JSON.parse(localStorage.getItem("wcity")||"null");if(s){$("wc").value=s.c;$("wr").value=s.r}}catch(e){}
+
+/* ---------- prayer ---------- */
+const PN=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+let ptimes=null,ptimers=[];
+const pname=n=>lang=="ar"?T.ar[n]:n;
+function schedule(){
+ptimers.forEach(clearTimeout);ptimers=[];if(!ptimes)return;
+const bf=+$("pb").value,now=Date.now();
+PN.forEach(n=>{const hm=ptimes[n].split(":"),d=new Date();d.setHours(+hm[0],+hm[1],0,0);const t=d.getTime();
+if(bf>0&&t-bf*60000>now)ptimers.push(setTimeout(()=>fire("🕌",pname(n)+" — "+tr("pbef").replace("{n}",bf)),t-bf*60000-now));
+if(t>now)ptimers.push(setTimeout(()=>fire("🕌",pname(n)+" — "+tr("pnow")),t-now))})}
+function drawPrayer(){
+if(!ptimes)return;const now=new Date();let nx=null;
+PN.forEach(n=>{const hm=ptimes[n].split(":"),d=new Date();d.setHours(+hm[0],+hm[1],0,0);if(!nx&&d>now)nx=n});
+let h="";PN.forEach(n=>h+='<div class="glass pr'+(n==nx?" nx":"")+'"><span>'+pname(n)+'</span><b>'+ptimes[n]+'</b></div>');$("pout").innerHTML=h}
+async function prayer(){
+const c=$("pc").value.trim(),r=$("pr").value.trim();if(!c||!r)return;
+$("pout").textContent="⏳ ...";
+try{const j=await (await fetch("https://api.aladhan.com/v1/timingsByCity?method=3&city="+encodeURIComponent(r)+"&country="+encodeURIComponent(c))).json();
+if(!j.data||!j.data.timings){$("pout").textContent=tr("nf");return}
+ptimes={};PN.forEach(n=>ptimes[n]=j.data.timings[n].slice(0,5));
+sv("pcity",{c:c,r:r});drawPrayer();schedule()}catch(e){$("pout").textContent=tr("err")}}
+$("pgo").onclick=prayer;$("pb").onchange=schedule;
+try{const s=JSON.parse(localStorage.getItem("pcity")||"null");if(s){$("pc").value=s.c;$("pr").value=s.r;prayer()}}catch(e){}
+
+/* ---------- start ---------- */
+apply();
+const go=()=>{if($("splash").classList.contains("on"))show(lang?"home":"lang")};
+$("splash").onclick=go;setTimeout(go,4200);
 </script></body></html>
