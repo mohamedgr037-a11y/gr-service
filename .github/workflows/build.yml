@@ -26,6 +26,11 @@ jobs:
         run: |
           pip3 install --upgrade buildozer cython
 
+      # هذا هو السطر الجديد الذي يحل المشكلة
+      - name: Accept Android Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
       - name: Build with Buildozer
         run: |
           buildozer android debug
