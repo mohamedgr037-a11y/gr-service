@@ -304,7 +304,7 @@ cat << 'EOF' > static/index.html
                 else { addMessage('ai', data.reply); }
             } catch (e) {
                 document.getElementById('loading-msg')?.remove();
-                addMessage('ai', 'تعذر الاتصال بالخادم.');
+                addMessage('ai', 'تعذر الاتصال بالخادم. <br><button onclick="sendToServer()" style="margin-top:10px; padding:5px 15px; background:#4a6cf7; color:#fff; border:none; border-radius:10px; cursor:pointer;">إعادة المحاولة</button>');
             }
         }
         
