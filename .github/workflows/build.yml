@@ -26,10 +26,15 @@ jobs:
         run: |
           pip3 install --upgrade buildozer cython
 
-      # هذا هو السطر الجديد الذي يحل المشكلة
-      - name: Accept Android Licenses
+      - name: Setup Android SDK
         run: |
+          sudo mkdir -p /usr/lib/android-sdk/cmdline-tools
+          sudo wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O commandlinetools.zip
+          sudo unzip commandlinetools.zip -d /usr/lib/android-sdk/cmdline-tools
+          sudo mv /usr/lib/android-sdk/cmdline-tools/cmdline-tools /usr/lib/android-sdk/cmdline-tools/latest
+          export PATH=$PATH:/usr/lib/android-sdk/cmdline-tools/latest/bin
           yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
       - name: Build with Buildozer
         run: |
