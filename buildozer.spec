@@ -14,3 +14,4 @@ android.minapi = 21
 android.ndk = 23b
 android.archs = arm64-v8a, armeabi-v7a
 android.presplash_color = #f4f7fc
+android.build_tools = 30.0.3
