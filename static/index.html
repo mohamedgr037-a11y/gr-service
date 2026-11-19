@@ -1,0 +1,161 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-R Service</title>
+<style>
+*{box-sizing:border-box;margin:0;font-family:sans-serif}
+body{background:#0b1026;color:#fff;min-height:100vh;overflow-x:hidden}
+.scr{display:none;min-height:100vh;padding:20px;flex-direction:column;align-items:center}
+.scr.on{display:flex}
+#splash{justify-content:center;text-align:center;background:radial-gradient(circle,#2a1f5c,#0b1026)}
+.logo{font-size:44px;background:linear-gradient(90deg,#ffd76a,#ff8fd8,#7ad7ff);-webkit-background-clip:text;color:transparent;animation:glow 2s infinite alternate}
+@keyframes glow{to{filter:drop-shadow(0 0 14px #ffd76a)}}
+.orn{color:#ffd76a;font-size:26px;margin:14px}
+.w{font-size:22px;margin:8px;opacity:0;animation:f 1.5s forwards}
+.w2{animation-delay:1s}
+@keyframes f{to{opacity:1}}
+h2{margin:10px 0 14px;color:#ffd76a}
+#q{width:100%;padding:12px;border-radius:14px;border:0;font-size:16px;margin-bottom:12px}
+#langs{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lb{background:#1b2350;border:1px solid #3b4a9a;border-radius:14px;padding:14px;text-align:center;color:#fff;font-size:15px}
+.lb:active{background:#3b4a9a}
+#menu{gap:14px;width:100%}
+.mb{width:100%;max-width:420px;padding:20px;border:0;border-radius:20px;font-size:20px;color:#fff;background:linear-gradient(135deg,#4b3bd6,#c04fd8);box-shadow:0 6px 18px #0008}
+.mb:active{transform:scale(.97)}
+.back{align-self:flex-start;background:none;border:0;color:#ffd76a;font-size:18px;margin-bottom:8px}
+#msgs{flex:1;width:100%;overflow-y:auto;max-height:68vh;display:flex;flex-direction:column;gap:8px}
+.m{padding:10px 14px;border-radius:16px;max-width:85%;white-space:pre-wrap;line-height:1.5}
+.u{background:#4b3bd6;align-self:flex-end}
+.a{background:#1b2350;align-self:flex-start}
+.s{background:#5a1f2a;align-self:center;font-size:13px}
+#bar{display:flex;gap:8px;width:100%;margin-top:10px}
+#in{flex:1;padding:12px;border-radius:14px;border:0;font-size:16px}
+#send{padding:0 18px;border:0;border-radius:14px;background:#ffd76a;font-size:18px}
+.soon{text-align:center;margin-top:60px;font-size:20px;opacity:.8}
+
+#wf{width:100%;max-width:440px}
+.wrow{display:flex;gap:8px;margin-bottom:8px}
+.wrow input{flex:1;padding:12px;border-radius:14px;border:0;font-size:16px}
+.wrow button{padding:0 16px;border:0;border-radius:14px;background:#ffd76a;font-size:16px}
+.wcur{background:linear-gradient(135deg,#1e3c72,#2a5298);border-radius:22px;padding:20px;text-align:center;margin:10px 0}
+.wcur .t{font-size:56px;font-weight:300}
+.wcur .d{font-size:18px;opacity:.9}
+.wday{display:flex;align-items:center;justify-content:space-between;background:#1b2350;border-radius:14px;padding:10px 14px;margin:6px 0}
+.wday .i{font-size:26px}
+.tip{background:#2a1f5c;border-radius:14px;padding:12px;margin:6px 0;font-size:14px;line-height:1.5}
+#pf{width:100%;max-width:440px}.prow{display:flex;justify-content:space-between;background:#1b2350;border-radius:14px;padding:14px;margin:6px 0;font-size:18px}.prow.nx{background:linear-gradient(135deg,#4b3bd6,#c04fd8)}.pbtn{width:100%;padding:12px;border:0;border-radius:14px;background:#ffd76a;font-size:16px;margin:6px 0}#pb{width:100%;padding:12px;border-radius:14px;border:0;font-size:16px;margin:6px 0}</style></head><body>
+
+<div id="splash" class="scr on">
+<div class="orn">✦ ❖ ✦</div>
+<div class="logo">𝓖 - 𝓡 &nbsp;𝓢𝓮𝓻𝓿𝓲𝓬𝓮</div>
+<div class="orn">❖ ✦ ❖</div>
+<div class="w">L'équipe G-R Service vous souhaite la bienvenue</div>
+<div class="w w2">فريق G-R Service يرحب بكم</div>
+</div>
+
+<div id="lang" class="scr">
+<h2>🌍 Language / اللغة / Langue</h2>
+<input id="q" placeholder="🔍 ...">
+<div id="langs"></div>
+</div>
+
+<div id="home" class="scr">
+<div class="logo" style="font-size:30px;margin:10px">𝓖 - 𝓡 𝓢𝓮𝓻𝓿𝓲𝓬𝓮</div>
+<div id="menu" class="scr on" style="min-height:0;padding:10px;align-items:center">
+<button class="mb" data-go="alarm"></button>
+<button class="mb" data-go="remind"></button>
+<button class="mb" data-go="weather"></button>
+<button class="mb" data-go="chat"></button>
+<button class="mb" data-go="prayer"></button>
+</div></div>
+
+<div id="chat" class="scr">
+<button class="back" onclick="show('home')">←</button>
+<div id="msgs"></div>
+<div id="bar"><input id="in"><button id="send">➤</button></div>
+</div>
+
+
+<div id="weather" class="scr">
+<button class="back" onclick="show('home')">←</button>
+<div id="wf">
+<div class="wrow"><input id="wc" placeholder="Pays / البلد"></div>
+<div class="wrow"><input id="wr" placeholder="Ville / المنطقة"><button id="wgo">🔍</button></div>
+<div id="wout"></div>
+</div></div>
+<div id="prayer" class="scr"><button class="back" onclick="show('home')">←</button><div id="pf"><div class="wrow"><input id="pc" placeholder="Pays / البلد"></div><div class="wrow"><input id="pr" placeholder="Ville / المدينة"><button id="pgo">🔍</button></div><select id="pb"><option value="0">0 min</option><option value="5">5 min</option><option value="10" selected>10 min</option><option value="15">15 min</option><option value="30">30 min</option></select><button class="pbtn" id="pn">🔔 تفعيل الإشعارات / Notifications</button><div id="pout"></div></div></div><div id="soon" class="scr">
+<button class="back" onclick="show('home')">←</button>
+<div class="soon" id="soont"></div>
+</div>
+
+<script>
+const L=[["ar","العربية"],["fr","Français"],["en","English"],["es","Español"],["pt","Português"],["de","Deutsch"],["it","Italiano"],["nl","Nederlands"],["ru","Русский"],["uk","Українська"],["pl","Polski"],["cs","Čeština"],["ro","Română"],["el","Ελληνικά"],["tr","Türkçe"],["fa","فارسی"],["ur","اردو"],["he","עברית"],["hi","हिन्दी"],["bn","বাংলা"],["pa","ਪੰਜਾਬੀ"],["ta","தமிழ்"],["te","తెలుగు"],["mr","मराठी"],["gu","ગુજરાતી"],["ne","नेपाली"],["si","සිංහල"],["th","ไทย"],["vi","Tiếng Việt"],["id","Bahasa Indonesia"],["ms","Bahasa Melayu"],["tl","Filipino"],["zh","中文"],["ja","日本語"],["ko","한국어"],["sw","Kiswahili"],["am","አማርኛ"],["ha","Hausa"],["yo","Yorùbá"],["zu","isiZulu"],["af","Afrikaans"],["so","Soomaali"],["sv","Svenska"],["no","Norsk"],["da","Dansk"],["fi","Suomi"],["hu","Magyar"],["bg","Български"],["sr","Српски"],["hr","Hrvatski"],["sk","Slovenčina"],["sq","Shqip"],["hy","Հայերեն"],["ka","ქართული"],["az","Azərbaycan"],["kk","Қазақша"],["uz","Oʻzbekcha"],["ku","Kurdî"],["ps","پښتو"],["my","မြန်မာ"],["km","ខ្មែរ"],["mn","Монгол"],["ca","Català"],["eu","Euskara"],["is","Íslenska"],["ga","Gaeilge"],["tzm","ⵜⴰⵎⴰⵣⵉⵖⵜ"]];
+const T={
+ar:{alarm:"⏰ المنبه",remind:"🔔 تذكير بإشعار",weather:"🌤️ الطقس",chat:"🤖 دردشة مع الذكاء",prayer:"🕌 أوقات الصلاة",ph:"اكتب رسالتك...",soon:"قريبًا ✨",bad:"⚠️ هذه الكلمات غير مسموحة.",err:"تعذّر الاتصال"},
+fr:{alarm:"⏰ Réveil",remind:"🔔 Rappel",weather:"🌤️ Météo",chat:"🤖 Chat IA",prayer:"🕌 Heures de prière",ph:"Écrivez votre message...",soon:"Bientôt ✨",bad:"⚠️ Ces mots ne sont pas autorisés.",err:"Connexion impossible"},
+en:{alarm:"⏰ Alarm",remind:"🔔 Reminder",weather:"🌤️ Weather",chat:"🤖 AI Chat",prayer:"🕌 Prayer Times",ph:"Type your message...",soon:"Coming soon ✨",bad:"⚠️ These words are not allowed.",err:"Connection failed"}};
+const RTL=["ar","fa","ur","he","ps","ku"];
+let lang=localStorage.getItem("lang")||"";
+const $=i=>document.getElementById(i);
+function show(id){document.querySelectorAll(".scr").forEach(e=>{if(e.id!="menu")e.classList.remove("on")});$(id).classList.add("on")}
+function tr(k){return (T[lang]||T.en)[k]}
+function apply(){document.documentElement.dir=RTL.includes(lang)?"rtl":"ltr";
+document.querySelectorAll(".mb").forEach(b=>b.textContent=tr(b.dataset.go));$("in").placeholder=tr("ph")}
+function drawLangs(f=""){$("langs").innerHTML="";L.filter(x=>(x[1]+x[0]).toLowerCase().includes(f.toLowerCase())).forEach(x=>{
+const b=document.createElement("button");b.className="lb";b.textContent=x[1];
+b.onclick=()=>{lang=x[0];localStorage.setItem("lang",lang);apply();show("home")};$("langs").appendChild(b)})}
+$("q").oninput=e=>drawLangs(e.target.value);
+drawLangs();
+document.querySelectorAll(".mb").forEach(b=>b.onclick=()=>{
+const g=b.dataset.go;if(g=="chat"){show("chat")}else if(g=="weather"){show("weather")}else if(g=="prayer"){show("prayer")}else{$("soont").textContent=b.textContent+"\n\n"+tr("soon");show("soon")}});
+const BAD=["fuck","shit","bitch","merde","putain","connard","شرموط","زب","كس","قحبة","عاهرة","منيك","ابن الكلب"];
+function bad(t){t=t.toLowerCase();return BAD.some(w=>t.includes(w))}
+let hist=[];
+function add(c,t){const d=document.createElement("div");d.className="m "+c;d.textContent=t;$("msgs").appendChild(d);$("msgs").scrollTop=1e9;return d}
+async function send(){const t=$("in").value.trim();if(!t)return;$("in").value="";add("u",t);
+if(bad(t)){add("s",tr("bad"));return}
+hist.push({role:"user",content:t});
+const w=add("a","...");
+try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},
+body:JSON.stringify({messages:[{role:"system",content:"Reply in the user's language, politely and clearly. Language code: "+lang}].concat(hist)})});
+const j=await r.json();
+if(j.blocked){w.className="m s";w.textContent=tr("bad");hist.pop();return}
+if(j.reply){w.textContent=j.reply;hist.push({role:"assistant",content:j.reply})}else w.textContent=tr("err")
+}catch(e){w.textContent=tr("err")}}
+$("send").onclick=send;$("in").onkeydown=e=>{if(e.key=="Enter")send()};
+
+const WC={0:["☀️","Clair"],1:["🌤️","Peu nuageux"],2:["⛅","Nuageux"],3:["☁️","Couvert"],45:["🌫️","Brouillard"],48:["🌫️","Brouillard"],51:["🌦️","Bruine"],53:["🌦️","Bruine"],55:["🌦️","Bruine"],61:["🌧️","Pluie"],63:["🌧️","Pluie"],65:["🌧️","Forte pluie"],71:["❄️","Neige"],73:["❄️","Neige"],75:["❄️","Neige"],80:["🌦️","Averses"],81:["🌧️","Averses"],82:["⛈️","Fortes averses"],95:["⛈️","Orage"],96:["⛈️","Orage"],99:["⛈️","Orage"]};
+function wi(c){return WC[c]||["🌡️","-"]}
+function tips(d,l){
+const out=[];const mx=Math.max(...d.temperature_2m_max),mn=Math.min(...d.temperature_2m_min);
+const rain=d.precipitation_probability_max.some(x=>x>=50),storm=d.weather_code.some(x=>x>=95),uv=Math.max(...d.uv_index_max);
+const ar=l=="ar";
+if(mx>=35)out.push(ar?"🥵 حرارة مرتفعة: اشرب الماء كثيرًا وتجنب الشمس وقت الظهيرة.":"🥵 Forte chaleur : buvez beaucoup d'eau, évitez le soleil à midi.");
+if(mn<=5)out.push(ar?"🧥 برد: ارتدِ ملابس دافئة.":"🧥 Froid : habillez-vous chaudement.");
+if(rain)out.push(ar?"☔ أمطار متوقعة: احمل مظلة.":"☔ Pluie prévue : prenez un parapluie.");
+if(storm)out.push(ar?"⛈️ عواصف محتملة: تجنب الخروج غير الضروري.":"⛈️ Orages possibles : évitez les sorties inutiles.");
+if(uv>=7)out.push(ar?"🕶️ أشعة UV عالية: استعمل واقي الشمس.":"🕶️ UV élevé : utilisez de la crème solaire.");
+if(!out.length)out.push(ar?"👍 طقس معتدل طوال الأسبوع.":"👍 Temps agréable toute la semaine.");
+return out}
+async function weather(){
+const c=$("wc").value.trim(),r=$("wr").value.trim();if(!r&&!c)return;
+$("wout").innerHTML="⏳ ...";
+try{
+let g=await (await fetch("https://geocoding-api.open-meteo.com/v1/search?count=10&name="+encodeURIComponent(r||c))).json();
+let res=g.results||[];
+if(c&&r){const f=res.filter(x=>(x.country||"").toLowerCase().includes(c.toLowerCase())||(x.admin1||"").toLowerCase().includes(c.toLowerCase()));if(f.length)res=f}
+if(!res.length){$("wout").textContent="❌ Introuvable / غير موجود";return}
+const p=res[0];
+const w=await (await fetch("https://api.open-meteo.com/v1/forecast?latitude="+p.latitude+"&longitude="+p.longitude+"&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto&forecast_days=7")).json();
+const cu=w.current,d=w.daily,cw=wi(cu.weather_code);
+const ar=lang=="ar";
+const days=ar?["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+let h='<div class="wcur"><div class="d">📍 '+p.name+(p.country?", "+p.country:"")+'</div><div class="t">'+Math.round(cu.temperature_2m)+'°</div><div class="d">'+cw[0]+" "+cw[1]+'</div><div class="d">💧 '+cu.relative_humidity_2m+'%  💨 '+Math.round(cu.wind_speed_10m)+' km/h</div></div>';
+d.time.forEach((t,i)=>{const x=wi(d.weather_code[i]);h+='<div class="wday"><span>'+days[new Date(t).getDay()]+'</span><span class="i">'+x[0]+'</span><span>💧'+(d.precipitation_probability_max[i]||0)+'%</span><span>'+Math.round(d.temperature_2m_max[i])+'° / '+Math.round(d.temperature_2m_min[i])+'°</span></div>'});
+h+='<h2 style="font-size:17px;margin-top:14px">'+(ar?"💡 نصائح الأسبوع":"💡 Conseils de la semaine")+'</h2>';
+tips(d,lang).forEach(x=>h+='<div class="tip">'+x+'</div>');
+$("wout").innerHTML=h;
+}catch(e){$("wout").textContent=tr("err")}}
+$("wgo").onclick=weather;$("wr").onkeydown=e=>{if(e.key=="Enter")weather()};
+</script><script src="/static/prayer.js"></script><script>apply();
+setTimeout(()=>show(lang?"home":"lang"),4000);
+</script></body></html>
