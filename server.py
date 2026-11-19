@@ -3,7 +3,7 @@ import requests, re, os, json, math
 from datetime import datetime, timezone
 
 app = Flask(__name__, static_folder="static")
-KEY = os.environ.get("KEY") or open("key.txt").read().strip()
+KEY = "sk-WENkF2BdGtUp5CSs8rvEwg"
 URL = "https://app.ai-grid.io/v1/chat/completions"
 MODEL = "google/gemma-4-31B"
 BAD = {"fuck","shit","bitch","merde","putain","connard"}
