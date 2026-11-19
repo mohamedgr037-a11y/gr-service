@@ -49,7 +49,7 @@ def chat():
     msgs, last = get_msgs()
     if is_bad(last): return jsonify({"blocked": True})
     try:
-        r = requests.post(URL, timeout=60, headers=H(), json={"model": MODEL, "messages": msgs, "max_tokens": 1000, "temperature": 0.2})
+        r = requests.post(URL, timeout=120, headers=H(), json={"model": MODEL, "messages": msgs, "max_tokens": 1000, "temperature": 0.2})
         return jsonify({"reply": r.json()["choices"][0]["message"]["content"]})
     except Exception as e: return jsonify({"error": str(e)}), 500
 
@@ -59,7 +59,7 @@ def stream():
     if is_bad(last): return jsonify({"blocked": True})
     def gen():
         try:
-            with requests.post(URL, stream=True, timeout=60, headers=H(), json={"model": MODEL, "messages": msgs, "max_tokens": 1000, "temperature": 0.2, "stream": True}) as r:
+            with requests.post(URL, stream=True, timeout=120, headers=H(), json={"model": MODEL, "messages": msgs, "max_tokens": 1000, "temperature": 0.2, "stream": True}) as r:
                 if r.status_code != 200: yield "\x00ERR"; return
                 r.encoding = "utf-8"
                 for line in r.iter_lines(decode_unicode=True):
