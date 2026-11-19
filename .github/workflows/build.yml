@@ -26,14 +26,8 @@ jobs:
         run: |
           pip3 install --upgrade buildozer cython
 
-      # إجبار Buildozer على قبول التراخيص وتثبيت الأدوات
       - name: Build with Buildozer
         run: |
-          export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
-          export ANDROID_SDK_ROOT=$ANDROID_HOME
-          # هذا الأمر يتخطى التراخيص ويثبت الأدوات المطلوبة
-          mkdir -p $ANDROID_HOME
-          touch $ANDROID_HOME/licenses/android-sdk-license
           buildozer android debug
 
       - name: Upload APK
