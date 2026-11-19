@@ -1,302 +1,454 @@
-<!DOCTYPE html><html><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>G-R Service</title><link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#0b1026">
-<style>
-:root{--bg1:#e6edff;--bg2:#f7e8ff;--txt:#1b1f3a;--mut:#5b6080;--glass:rgba(255,255,255,.55);--bd:rgba(255,255,255,.75);--inp:rgba(255,255,255,.8);--acc:#5b5bf0;--acc2:#c04fd8;--sh:rgba(40,40,100,.18)}
-@media(prefers-color-scheme:dark){:root{--bg1:#0b1026;--bg2:#1c1240;--txt:#f2f4ff;--mut:#aab0d6;--glass:rgba(255,255,255,.08);--bd:rgba(255,255,255,.16);--inp:rgba(255,255,255,.1);--sh:rgba(0,0,0,.4)}}
-*{box-sizing:border-box;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%}
-body{background:linear-gradient(160deg,var(--bg1),var(--bg2)) fixed;color:var(--txt);overflow-x:hidden}
-.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:fl 14s ease-in-out infinite alternate}
-.bg i:nth-child(1){width:60vw;height:60vw;background:#6a5cff;top:-10vw;left:-15vw}
-.bg i:nth-child(2){width:55vw;height:55vw;background:#ff6ad5;bottom:-10vw;right:-15vw;animation-delay:-5s}
-.bg i:nth-child(3){width:40vw;height:40vw;background:#27c5ff;top:40vh;left:30vw;opacity:.35;animation-delay:-9s}
-@keyframes fl{to{transform:translate(8vw,-6vh) scale(1.15)}}
-.scr{display:none;position:relative;z-index:1;min-height:100vh;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px 24px;flex-direction:column;align-items:center}
-.scr.on{display:flex;animation:in .35s ease}
-@keyframes in{from{opacity:0;transform:translateY(10px)}}
-.glass{background:var(--glass);border:1px solid var(--bd);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-radius:24px;box-shadow:0 8px 32px var(--sh)}
-.wrap{width:100%;max-width:460px}
-h1,h2{font-weight:700}
-.grad{background:linear-gradient(90deg,#ffb938,#ff6ad5,#4cc9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-#splash{justify-content:center;text-align:center;gap:14px;cursor:pointer}
-#splash img{width:150px;height:150px;border-radius:36px;box-shadow:0 14px 40px var(--sh);animation:pop 1s ease}
-@keyframes pop{from{transform:scale(.6);opacity:0}}
-#splash .s1,#splash .s2{padding:14px 20px;font-size:19px;opacity:0;animation:fd 1s .5s forwards}
-#splash .s2{animation-delay:1.3s}
-@keyframes fd{to{opacity:1}}
-.top{display:flex;align-items:center;gap:10px;width:100%;max-width:460px;margin-bottom:14px}
-.top h2{flex:1;font-size:20px}
-.ib{width:44px;height:44px;border-radius:15px;border:1px solid var(--bd);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:var(--txt);font-size:20px}
-input,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--bd);background:var(--inp);color:var(--txt);font-size:16px;outline:none}
-input:focus,select:focus{border-color:var(--acc)}
-.btn{padding:13px 18px;border:0;border-radius:16px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-size:16px;font-weight:600;box-shadow:0 6px 18px rgba(91,91,240,.4)}
-.btn:active,.tile:active,.lb:active{transform:scale(.97)}
-.row{display:flex;gap:8px;margin-bottom:8px}
-#langs{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px;margin-top:12px}
-.lb{padding:14px;border-radius:18px;border:1px solid var(--bd);background:var(--glass);color:var(--txt);font-size:15px}
-.hero{display:flex;align-items:center;gap:14px;padding:16px;width:100%;max-width:460px;margin-bottom:16px}
-.hero img{width:60px;height:60px;border-radius:18px}
-.hero b{font-size:22px;display:block}.hero small{color:var(--mut)}
-#tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:460px}
-.tile{aspect-ratio:1/.95;border-radius:26px;border:1px solid var(--bd);background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:var(--txt);font-size:16px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 28px var(--sh)}
-.tile b{font-size:42px;filter:drop-shadow(0 4px 8px var(--sh))}
-.tile:nth-child(5){grid-column:1/3;aspect-ratio:auto;padding:20px;flex-direction:row}
-#msgs{width:100%;max-width:460px;flex:1;max-height:calc(100vh - 190px);overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
-.m{padding:11px 15px;border-radius:20px;max-width:85%;white-space:pre-wrap;line-height:1.55;border:1px solid var(--bd)}
-.m.u{align-self:flex-end;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:0}
-.m.a{align-self:flex-start;background:var(--glass)}
-.dots{display:inline-flex;gap:5px;padding:5px 2px;align-items:center}
-.dots i{width:8px;height:8px;border-radius:50%;background:var(--mut);animation:bn 1.2s infinite ease-in-out}
-.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}
-@keyframes bn{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
-.m{animation:pp .18s ease}@keyframes pp{from{opacity:0;transform:translateY(6px)}}
-.m.s{align-self:center;background:rgba(255,80,100,.2);font-size:13px}
-#bar{display:flex;gap:8px;width:100%;max-width:460px;margin-top:10px}
-.card{padding:16px;margin:8px 0;width:100%}
-.cur{text-align:center;padding:22px;margin:10px 0;background:linear-gradient(135deg,rgba(91,91,240,.45),rgba(192,79,216,.4))}
-.cur .t{font-size:64px;font-weight:200}.cur div{margin:2px}
-.day{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin:6px 0}
-.day .i{font-size:26px}.day span{flex:1;text-align:center}.day span:first-child{text-align:start}.day span:last-child{text-align:end}
-.tip{padding:12px 14px;margin:6px 0;font-size:14px;line-height:1.5}
-.pr{display:flex;justify-content:space-between;padding:15px 18px;margin:7px 0;font-size:18px}
-.pr.nx{background:linear-gradient(135deg,rgba(91,91,240,.6),rgba(192,79,216,.55));color:#fff}
-.it{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;margin:7px 0}
-.it b{font-size:26px;font-weight:300;display:block}.it small{color:var(--mut)}
-.it button{border:0;background:none;font-size:22px}
-.h3{margin:14px 4px 6px;font-size:16px;color:var(--mut)}
-#ring{position:fixed;inset:0;z-index:50;background:rgba(10,10,40,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px}
-#ring.on{display:flex}#ring .glass{padding:30px;text-align:center;width:100%;max-width:340px}
-#ring .e{font-size:64px;animation:sh .6s infinite}@keyframes sh{50%{transform:rotate(14deg)}}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>G-R Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #f4f7fc; color: #333; overflow-x: hidden; }
+        
+        /* Screens */
+        #splash-screen, #lang-screen, #name-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s ease; }
+        #splash-screen { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); }
+        #lang-screen { background: #000; color: #fff; display: none; align-items: stretch; justify-content: flex-start; overflow-y: auto; }
+        #name-screen { background: #f4f7fc; display: none; }
 
-#msgs{gap:20px;padding:4px 2px 12px;max-height:calc(100vh - 175px)}
-#msgs .m{max-width:100%;font-size:16px;line-height:1.7;padding:0 4px;border:0;border-radius:0;background:none;color:var(--txt);animation:pp .18s ease}
-#msgs .m.u{align-self:flex-end;max-width:85%;padding:10px 16px;border-radius:22px;background:var(--inp);border:1px solid var(--bd)}
-#msgs .m.a{align-self:stretch}
-#msgs .m.s{align-self:center;color:#e5484d;font-size:13px}
-#msgs .m img{display:block;max-width:100%;max-height:230px;border-radius:16px;margin-bottom:8px}
-#cbox{width:100%;max-width:460px;margin-top:6px}
-#comp{display:flex;align-items:flex-end;gap:6px;padding:7px;border-radius:30px;background:var(--glass);border:1px solid var(--bd);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 8px 28px var(--sh)}
-#comp:focus-within{border-color:var(--acc)}
-#in{flex:1;min-width:0;border:0;background:none;resize:none;max-height:140px;padding:10px 4px;font-size:16px;line-height:1.4;color:var(--txt);outline:none}
-#in::placeholder{color:var(--mut)}
-.cb{width:42px;height:42px;border-radius:50%;border:0;flex:none;font-size:22px;display:flex;align-items:center;justify-content:center}
-#attb{background:var(--inp);color:var(--txt)}
-#send{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:700;transition:opacity .15s}
-#send:disabled{opacity:.35}
-#prev{display:none;padding:0 4px 8px}
-#prev.on{display:block}
-.pv{position:relative;display:inline-block}
-.pv img{width:68px;height:68px;object-fit:cover;border-radius:16px;border:1px solid var(--bd);display:block}
-.pv button{position:absolute;top:-7px;inset-inline-end:-7px;width:24px;height:24px;border-radius:50%;border:0;background:#222;color:#fff;font-size:14px;line-height:1}
-</style></head><body>
-<div class="bg"><i></i><i></i><i></i></div>
+        .splash-logo { font-size: 60px; color: #4a6cf7; margin-bottom: 20px; animation: pulse 2s infinite; }
+        .splash-title { font-size: 28px; color: #2c3e50; font-weight: 700; margin-bottom: 10px; }
+        .splash-subtitle { font-size: 16px; color: #555; margin-bottom: 5px; }
+        .splash-subtitle.en { font-size: 14px; color: #777; direction: ltr; }
+        .splash-btn { margin-top: 30px; padding: 12px 30px; background: #4a6cf7; color: #fff; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(74, 108, 247, 0.4); transition: 0.2s; }
+        .splash-btn:active { transform: scale(0.95); }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-<section id="splash" class="scr on">
-<img src="/static/i512.png" alt="">
-<div class="glass s1">L'équipe <b class="grad">G-R Service</b> vous souhaite la bienvenue</div>
-<div class="glass s2">فريق <b class="grad">G-R Service</b> يرحب بكم</div>
-</section>
+        .lang-header { padding: 60px 20px 20px; text-align: center; font-size: 34px; font-weight: 700; letter-spacing: 1px; animation: floatText 3s ease-in-out infinite; }
+        @keyframes floatText { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .lang-list { padding: 20px; display: flex; flex-direction: column; gap: 15px; width: 100%; }
+        .lang-item { background: rgba(255,255,255,0.1); padding: 15px 20px; border-radius: 15px; font-size: 18px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; }
+        .lang-item:active { background: rgba(255,255,255,0.3); }
 
-<section id="lang" class="scr">
-<div class="top"><h2>🌍 Language / اللغة / Langue</h2></div>
-<div class="wrap"><input id="q" placeholder="🔍"></div>
-<div id="langs"></div>
-</section>
+        .name-card { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 90%; max-width: 400px; }
+        .name-card h2 { color: #2c3e50; margin-bottom: 20px; }
+        .name-input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 15px; font-size: 16px; outline: none; margin-bottom: 20px; text-align: center; font-family: 'Tajawal'; }
+        .name-input:focus { border-color: #4a6cf7; }
 
-<section id="home" class="scr">
-<div class="glass hero"><img src="/static/i512.png" alt=""><div><b class="grad">G-R Service</b><small id="sub"></small></div><button class="ib" id="chg" style="margin-inline-start:auto">🌍</button></div>
-<div id="tiles">
-<button class="tile" data-go="alarm"><b>⏰</b><span data-t="alarm"></span></button>
-<button class="tile" data-go="remind"><b>🔔</b><span data-t="remind"></span></button>
-<button class="tile" data-go="weather"><b>🌤️</b><span data-t="weather"></span></button>
-<button class="tile" data-go="chat"><b>🤖</b><span data-t="chat"></span></button>
-<button class="tile" data-go="prayer"><b>🕌</b><span data-t="prayer"></span></button>
-</div></section>
+        /* Main App */
+        #main-screen { display: none; opacity: 0; transition: opacity 0.5s; }
+        .header { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo i { font-size: 28px; color: #4a6cf7; }
+        .logo h1 { font-size: 20px; color: #2c3e50; }
+        .welcome-msg { font-size: 14px; color: #4a6cf7; font-weight: bold; margin-top: 5px; cursor: pointer; }
+        .avatar { width: 45px; height: 45px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4a6cf7; font-size: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; }
 
-<section id="chat" class="scr">
-<div class="top"><button class="ib" data-back>←</button><h2 data-t="chat"></h2></div>
-<div id="msgs"></div>
-<div id="cbox"><div id="prev"></div><div id="comp"><button class="cb" id="attb" aria-label="image">＋</button><textarea id="in" rows="1"></textarea><button class="cb" id="send" disabled>↑</button></div></div>
-<input type="file" id="file" accept="image/*" hidden>
-</section>
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; margin-top: 10px; }
+        .card { background: #fff; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(255,255,255,0.5); }
+        .card:active { transform: scale(0.97); }
+        .card i { font-size: 40px; margin-bottom: 10px; color: #4a6cf7; }
+        .card span { font-size: 15px; font-weight: 500; color: #444; }
+        .card.full-width { grid-column: span 2; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
+        
+        /* Common Screens */
+        #chat-screen, #prayer-screen, #athkar-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f9f9f9; z-index: 100; display: none; flex-direction: column; }
+        .chat-header { padding: 15px; background: #fff; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px; }
+        .chat-header button { background: none; border: none; font-size: 20px; color: #333; cursor: pointer; }
 
-<section id="weather" class="scr">
-<div class="top"><button class="ib" data-back>←</button><h2 data-t="weather"></h2></div>
-<div class="wrap">
-<div class="row"><input id="wc" data-p="country"></div>
-<div class="row"><input id="wr" data-p="city"><button class="btn" id="wgo">🔍</button></div>
-<div id="wout"></div></div></section>
+        /* Chat Content */
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; position: relative; }
+        .message.user { background: #4a6cf7; color: #fff; align-self: flex-end; border-bottom-right-radius: 5px; }
+        .message.ai { background: #fff; color: #333; align-self: flex-start; border-bottom-left-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .message.ai img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+        .typing-dots { display: flex; gap: 5px; align-items: center; justify-content: center; padding: 5px; }
+        .typing-dots span { width: 8px; height: 8px; background: #4a6cf7; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .message-actions { display: flex; gap: 15px; margin-top: 8px; opacity: 0.6; }
+        .message-actions i { cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .message-actions i:hover { color: #4a6cf7; }
+        .message-actions i.active-like { color: #27ae60 !important; opacity: 1; }
+        .message-actions i.active-dislike { color: #e74c3c !important; opacity: 1; }
+        .chat-input-area { padding: 10px 15px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: flex-end; gap: 10px; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; font-family: inherit; font-size: 15px; max-height: 120px; min-height: 40px; resize: none; outline: none; transition: height 0.1s; }
+        .chat-input:focus { border-color: #4a6cf7; }
+        .action-btn { background: #4a6cf7; color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; }
+        .action-btn:hover { background: #3b5bdb; }
+        .action-btn.secondary { background: #f0f0f0; color: #555; }
+        
+        /* Prayer Content */
+        .prayer-list { background: #fff; border-radius: 15px; padding: 20px; margin: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .prayer-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; font-size: 16px; }
+        .prayer-item:last-child { border-bottom: none; }
+        .prayer-item span:first-child { font-weight: bold; color: #444; }
+        .prayer-item span:last-child { color: #4a6cf7; font-weight: bold; }
+        .compass-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .compass { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #4a6cf7; position: relative; display: flex; align-items: center; justify-content: center; background: #fff; box-shadow: inset 0 0 20px rgba(0,0,0,0.1); }
+        .compass-needle { width: 4px; height: 80px; background: red; position: absolute; bottom: 50%; transform-origin: bottom center; transition: transform 0.5s ease-out; }
+        .compass-center { width: 12px; height: 12px; background: #4a6cf7; border-radius: 50%; position: absolute; }
+        .qibla-text { margin-top: 15px; font-size: 18px; font-weight: bold; color: #4a6cf7; }
 
-<section id="prayer" class="scr">
-<div class="top"><button class="ib" data-back>←</button><h2 data-t="prayer"></h2></div>
-<div class="wrap">
-<div class="row"><input id="pc" data-p="country"></div>
-<div class="row"><input id="pr" data-p="city"><button class="btn" id="pgo">🔍</button></div>
-<div class="row"><select id="pb"><option value="0">0</option><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="30">30</option></select></div>
-<div class="row"><button class="btn" id="pn" style="width:100%" data-t="notif"></button></div>
-<div id="pout"></div></div></section>
+        /* Athkar Content */
+        .athkar-tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; }
+        .athkar-tab { flex: 1; text-align: center; padding: 15px; font-size: 16px; font-weight: bold; color: #777; cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .athkar-tab.active { color: #4a6cf7; border-bottom-color: #4a6cf7; }
+        .athkar-container { padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; flex: 1; }
+        .athkar-card { background: #fff; border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s; border: 1px solid #eee; }
+        .athkar-card:active { transform: scale(0.98); background: #f9f9f9; }
+        .athkar-text { font-size: 18px; font-weight: 700; color: #2c3e50; line-height: 1.6; }
+        .athkar-count { width: 50px; height: 50px; flex-shrink: 0; background: #e0eafc; color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; margin-right: 15px; }
+        .athkar-card.done { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body>
 
-<section id="alarm" class="scr">
-<div class="top"><button class="ib" data-back>←</button><h2 data-t="alarm"></h2></div>
-<div class="wrap">
-<div class="glass card"><div class="row"><input type="time" id="at" value="07:00"></div>
-<div class="row"><input id="al" data-p="label"></div>
-<button class="btn" id="aadd" style="width:100%" data-t="add"></button></div>
-<div id="alist"></div><p class="h3" data-t="note"></p></div></section>
+    <div id="splash-screen">
+        <i class="fa-solid fa-handshake-angle splash-logo"></i>
+        <div class="splash-title">تطبيق G-R Service</div>
+        <div class="splash-subtitle">مرحباً بكم، التطبيق تحت التطوير</div>
+        <div class="splash-subtitle">نشكركم على تفهمكم</div>
+        <div class="splash-subtitle en">Welcome to G-R Service</div>
+        <button class="splash-btn" onclick="showLanguageScreen()">ابدأ / Start</button>
+    </div>
 
-<section id="remind" class="scr">
-<div class="top"><button class="ib" data-back>←</button><h2 data-t="remind"></h2></div>
-<div class="wrap">
-<div class="glass card"><div class="row"><input type="datetime-local" id="rt"></div>
-<div class="row"><input id="rl" data-p="label"></div>
-<button class="btn" id="radd" style="width:100%" data-t="add"></button></div>
-<div id="rlist"></div><p class="h3" data-t="note"></p></div></section>
+    <div id="lang-screen">
+        <div class="lang-header">Welcome</div>
+        <div class="lang-list">
+            <div class="lang-item" onclick="showNameScreen()"><span>العربية</span><i class="fa-solid fa-check"></i></div>
+            <div class="lang-item" onclick="showNameScreen()"><span>English</span><i class="fa-solid fa-chevron-right"></i></div>
+            <div class="lang-item" onclick="showNameScreen()"><span>Français</span><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+    </div>
 
-<div id="ring"><div class="glass"><div class="e">⏰</div><h2 id="rtx" style="margin:12px 0 20px"></h2><button class="btn" id="rstop" data-t="stop"></button></div></div>
+    <div id="name-screen">
+        <div class="name-card">
+            <h2>ما هو اسمك؟</h2>
+            <input type="text" id="username-input" class="name-input" placeholder="أدخل اسمك هنا...">
+            <button class="splash-btn" style="width: 100%;" onclick="saveNameAndStart()">دخول</button>
+        </div>
+    </div>
 
-<script>
-const L=[["ar","العربية"],["fr","Français"],["en","English"],["es","Español"],["pt","Português"],["de","Deutsch"],["it","Italiano"],["nl","Nederlands"],["ru","Русский"],["uk","Українська"],["pl","Polski"],["cs","Čeština"],["ro","Română"],["el","Ελληνικά"],["tr","Türkçe"],["fa","فارسی"],["ur","اردو"],["he","עברית"],["hi","हिन्दी"],["bn","বাংলা"],["pa","ਪੰਜਾਬੀ"],["ta","தமிழ்"],["te","తెలుగు"],["mr","मराठी"],["gu","ગુજરાતી"],["ne","नेपाली"],["si","සිංහල"],["th","ไทย"],["vi","Tiếng Việt"],["id","Bahasa Indonesia"],["ms","Bahasa Melayu"],["tl","Filipino"],["zh","中文"],["ja","日本語"],["ko","한국어"],["sw","Kiswahili"],["am","አማርኛ"],["ha","Hausa"],["yo","Yorùbá"],["zu","isiZulu"],["af","Afrikaans"],["so","Soomaali"],["sv","Svenska"],["no","Norsk"],["da","Dansk"],["fi","Suomi"],["hu","Magyar"],["bg","Български"],["sr","Српски"],["hr","Hrvatski"],["sk","Slovenčina"],["sq","Shqip"],["hy","Հայերեն"],["ka","ქართული"],["az","Azərbaycan"],["kk","Қазақша"],["uz","Oʻzbekcha"],["ku","Kurdî"],["ps","پښتو"],["my","မြန်မာ"],["km","ខ្មែរ"],["mn","Монгол"],["ca","Català"],["eu","Euskara"],["is","Íslenska"],["ga","Gaeilge"],["tzm","ⵜⴰⵎⴰⵣⵉⵖⵜ"]];
-const T={
-ar:{alarm:"المنبه",remind:"تذكير بإشعار",weather:"الطقس",chat:"دردشة مع الذكاء",prayer:"أوقات الصلاة",sub:"خدماتك في مكان واحد",country:"البلد (مثل Algeria)",city:"المدينة / المنطقة",ph:"اكتب رسالتك...",bad:"⚠️ هذه الكلمات غير مسموحة.",err:"تعذّر الاتصال",nf:"❌ غير موجود",notif:"🔔 تفعيل الإشعارات",add:"➕ إضافة",label:"الوصف (اختياري)",stop:"إيقاف",note:"⚠️ يعمل بشكل أفضل والتطبيق مفتوح.",cl:"صافٍ",pc:"غائم جزئيًا",cd:"غائم",fg:"ضباب",dz:"رذاذ",rn:"مطر",sn:"ثلج",st:"عاصفة",tHot:"🥵 حرارة مرتفعة: اشرب الماء كثيرًا وتجنب الشمس وقت الظهيرة.",tCold:"🧥 برد: ارتدِ ملابس دافئة.",tRain:"☔ أمطار متوقعة: احمل مظلة.",tStorm:"⛈️ عواصف محتملة: تجنب الخروج غير الضروري.",tUv:"🕶️ أشعة UV عالية: استعمل واقي الشمس.",tOk:"👍 طقس معتدل طوال الأسبوع.",tips:"💡 نصائح الأسبوع",pnow:"حان الآن وقت الصلاة",pbef:"بعد {n} دقيقة",denied:"تم رفض الإشعارات",bmin:"دقيقة قبل الصلاة",Fajr:"الفجر",Dhuhr:"الظهر",Asr:"العصر",Maghrib:"المغرب",Isha:"العشاء"},
-fr:{alarm:"Réveil",remind:"Rappel",weather:"Météo",chat:"Chat IA",prayer:"Heures de prière",sub:"Vos services au même endroit",country:"Pays (ex. Algeria)",city:"Ville / région",ph:"Écrivez votre message...",bad:"⚠️ Ces mots ne sont pas autorisés.",err:"Connexion impossible",nf:"❌ Introuvable",notif:"🔔 Activer les notifications",add:"➕ Ajouter",label:"Description (facultatif)",stop:"Arrêter",note:"⚠️ Fonctionne mieux application ouverte.",cl:"Dégagé",pc:"Peu nuageux",cd:"Couvert",fg:"Brouillard",dz:"Bruine",rn:"Pluie",sn:"Neige",st:"Orage",tHot:"🥵 Forte chaleur : buvez beaucoup d'eau, évitez le soleil à midi.",tCold:"🧥 Froid : habillez-vous chaudement.",tRain:"☔ Pluie prévue : prenez un parapluie.",tStorm:"⛈️ Orages possibles : évitez les sorties inutiles.",tUv:"🕶️ UV élevé : utilisez de la crème solaire.",tOk:"👍 Temps agréable toute la semaine.",tips:"💡 Conseils de la semaine",pnow:"C'est l'heure de la prière",pbef:"Dans {n} min",denied:"Notifications refusées",bmin:"min avant la prière"},
-en:{alarm:"Alarm",remind:"Reminder",weather:"Weather",chat:"AI Chat",prayer:"Prayer Times",sub:"Your services in one place",country:"Country (e.g. Algeria)",city:"City / region",ph:"Type your message...",bad:"⚠️ These words are not allowed.",err:"Connection failed",nf:"❌ Not found",notif:"🔔 Enable notifications",add:"➕ Add",label:"Label (optional)",stop:"Stop",note:"⚠️ Works best while the app is open.",cl:"Clear",pc:"Partly cloudy",cd:"Cloudy",fg:"Fog",dz:"Drizzle",rn:"Rain",sn:"Snow",st:"Storm",tHot:"🥵 Very hot: drink lots of water, avoid midday sun.",tCold:"🧥 Cold: dress warmly.",tRain:"☔ Rain expected: take an umbrella.",tStorm:"⛈️ Possible storms: avoid unnecessary trips.",tUv:"🕶️ High UV: use sunscreen.",tOk:"👍 Pleasant weather all week.",tips:"💡 Weekly tips",pnow:"It's prayer time",pbef:"In {n} min",denied:"Notifications denied",bmin:"min before prayer"}};
-const RTL=["ar","fa","ur","he","ps","ku"];
-let lang=localStorage.getItem("lang")||"";
-const $=i=>document.getElementById(i);
-const tr=k=>((T[lang]||{})[k])||T.fr[k]&&lang=="fr"&&T.fr[k]||T.en[k]||k;
-const ld=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
-const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-function show(id){document.querySelectorAll(".scr").forEach(e=>e.classList.remove("on"));$(id).classList.add("on");window.scrollTo(0,0)}
-function apply(){
-document.documentElement.dir=RTL.includes(lang)?"rtl":"ltr";document.documentElement.lang=lang||"en";
-document.querySelectorAll("[data-t]").forEach(e=>e.textContent=tr(e.dataset.t));
-document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=tr(e.dataset.p));
-$("in").placeholder=tr("ph");$("sub").textContent=tr("sub");renderA();renderR()}
-function drawLangs(f=""){$("langs").innerHTML="";L.filter(x=>(x[1]+x[0]).toLowerCase().includes(f.toLowerCase())).forEach(x=>{
-const b=document.createElement("button");b.className="lb";b.textContent=x[1];
-b.onclick=()=>{lang=x[0];localStorage.setItem("lang",lang);apply();show("home")};$("langs").appendChild(b)})}
-$("q").oninput=e=>drawLangs(e.target.value);drawLangs();
-$("chg").onclick=()=>show("lang");
-document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>show("home"));
-document.querySelectorAll(".tile").forEach(b=>b.onclick=()=>show(b.dataset.go));
+    <div id="main-screen">
+        <div class="header">
+            <div class="logo">
+                <i class="fa-solid fa-handshake-angle"></i>
+                <div>
+                    <h1>G-R Service</h1>
+                    <div class="welcome-msg" id="welcome-user" onclick="resetName()">تغيير الاسم</div>
+                </div>
+            </div>
+            <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        </div>
+        <div class="grid-container">
+            <div class="card" onclick="openAthkar()"><i class="fa-solid fa-hands-praying" style="color: #9b59b6;"></i><span>عداد الأذكار</span></div>
+            <div class="card" onclick="alert('قريباً: ميزة المنبه')"><i class="fa-regular fa-clock" style="color: #e74c3c;"></i><span>المنبه</span></div>
+            <div class="card" onclick="openChat()"><i class="fa-solid fa-robot" style="color: #3498db;"></i><span>دردشة مع الذكاء</span></div>
+            <div class="card" onclick="alert('قريباً: ميزة الطقس')"><i class="fa-solid fa-cloud-sun" style="color: #f1c40f;"></i><span>الطقس 22°C</span></div>
+            <div class="card full-width" onclick="openPrayer()"><i class="fa-solid fa-mosque" style="color: #27ae60;"></i><span>أوقات الصلاة والأذان</span><div class="prayer-info" id="next-prayer">اضغط للعرض</div></div>
+        </div>
+    </div>
 
-/* ---------- notifications / ring ---------- */
-let ac=null,ringT=null;
-document.addEventListener("click",()=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){}},{once:true});
-if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
-async function notify(t,b){
-try{const r=await navigator.serviceWorker.getRegistration();if(r){await r.showNotification(t,{body:b,vibrate:[300,150,300]});return}}catch(e){}
-try{new Notification(t,{body:b})}catch(e){}}
-function beep(){try{if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.value=.25;o.start();o.stop(ac.currentTime+.25)}catch(e){}if(navigator.vibrate)navigator.vibrate([300,150,300])}
-function fire(icon,txt){notify(icon+" G-R Service",txt);$("rtx").textContent=txt;document.querySelector("#ring .e").textContent=icon;$("ring").classList.add("on");clearInterval(ringT);beep();ringT=setInterval(beep,900)}
-$("rstop").onclick=()=>{clearInterval(ringT);$("ring").classList.remove("on")};
-$("pn").onclick=async()=>{try{const p=await Notification.requestPermission();if(p=="granted"){notify("🕌 G-R Service","✅ OK");schedule()}else alert(tr("denied"))}catch(e){alert(tr("denied"))}};
+    <div id="chat-screen">
+        <div class="chat-header"><button onclick="closeChat()"><i class="fa-solid fa-arrow-right"></i></button><h2 style="font-size: 18px; color: #333;">المساعد الذكي</h2></div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+            <button class="action-btn secondary" onclick="document.getElementById('file-input').click()"><i class="fa-solid fa-image"></i></button>
+            <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleImage(event)">
+            <textarea id="chat-input" class="chat-input" placeholder="اكتب رسالتك..." rows="1" oninput="autoResize(this)"></textarea>
+            <button class="action-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
 
-/* ---------- alarm + reminder ---------- */
-const p2=n=>String(n).padStart(2,"0");
-function renderA(){const a=ld("alarms");$("alist").innerHTML="";a.forEach((x,i)=>{const d=document.createElement("div");d.className="glass it";
-d.innerHTML='<div><b>'+x.hm+'</b><small>'+(x.label||"")+'</small></div><div><input type="checkbox" '+(x.on?"checked":"")+' style="width:24px;height:24px"> <button>🗑️</button></div>';
-d.querySelector("input").onchange=e=>{a[i].on=e.target.checked;sv("alarms",a)};
-d.querySelector("button").onclick=()=>{a.splice(i,1);sv("alarms",a);renderA()};$("alist").appendChild(d)})}
-function renderR(){const a=ld("rems");$("rlist").innerHTML="";a.forEach((x,i)=>{const d=document.createElement("div");d.className="glass it";
-d.innerHTML='<div><b style="font-size:18px">'+(x.label||"🔔")+'</b><small>'+new Date(x.at).toLocaleString(lang||"en")+(x.done?" ✓":"")+'</small></div><button>🗑️</button>';
-d.querySelector("button").onclick=()=>{a.splice(i,1);sv("rems",a);renderR()};$("rlist").appendChild(d)})}
-$("aadd").onclick=()=>{const a=ld("alarms");if(!$("at").value)return;a.push({hm:$("at").value,label:$("al").value.trim(),on:true});sv("alarms",a);$("al").value="";renderA()};
-$("radd").onclick=()=>{const a=ld("rems"),t=new Date($("rt").value).getTime();if(!t)return;a.push({at:t,label:$("rl").value.trim(),done:false});sv("rems",a);$("rl").value="";renderR()};
-setInterval(()=>{const n=new Date(),hm=p2(n.getHours())+":"+p2(n.getMinutes()),key=n.toDateString()+hm;
-const a=ld("alarms");let ch=false;a.forEach(x=>{if(x.on&&x.hm==hm&&x.last!=key){x.last=key;ch=true;fire("⏰",x.label||hm)}});if(ch)sv("alarms",a);
-const r=ld("rems");ch=false;r.forEach(x=>{if(!x.done&&x.at<=Date.now()){x.done=true;ch=true;fire("🔔",x.label||"🔔")}});if(ch){sv("rems",r);renderR()}},5000);
+    <div id="prayer-screen">
+        <div class="chat-header"><button onclick="closePrayer()"><i class="fa-solid fa-arrow-right"></i></button><h2 style="font-size: 18px; color: #333;">أوقات الصلاة والقبلة</h2></div>
+        <div class="prayer-list" id="prayer-list"></div>
+        <div class="compass-container">
+            <h3>اتجاه القبلة</h3>
+            <div class="compass"><div class="compass-needle" id="compass-needle"></div><div class="compass-center"></div></div>
+            <div class="qibla-text" id="qibla-text">--°</div>
+        </div>
+    </div>
 
-/* ---------- chat ---------- */
-const BAD=["fuck","shit","bitch","merde","putain","connard","شرموط","زب","كس","قحبة","عاهرة","منيك","ابن الكلب"];
-const bad=t=>{t=t.toLowerCase();return BAD.some(w=>t.includes(w))};
-let hist=[],busy=false,pic=null;
-const SYS="You are a serious, precise assistant. Answer directly and briefly (1-4 sentences) unless asked for more. No filler, no emojis. You can see images the user sends. Reply in the user's language. Language code: ";
-function add(c,t,img){const d=document.createElement("div");d.className="m "+c;if(img){const i=document.createElement("img");i.src=img;d.appendChild(i)}if(t){const s=document.createElement("span");s.textContent=t;d.appendChild(s)}$("msgs").appendChild(d);$("msgs").scrollTop=1e9;return d}
-function upd(){$("send").disabled=busy||!($("in").value.trim()||pic)}
-function shrink(f){return new Promise(r=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1024/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL("image/jpeg",.8))};im.onerror=()=>r(null);im.src=u})}
-function drawPrev(){const p=$("prev");if(!pic){p.className="";p.innerHTML="";return}p.className="on";p.innerHTML='<div class="pv"><img src="'+pic+'"><button>×</button></div>';p.querySelector("button").onclick=()=>{pic=null;drawPrev();upd()}}
-$("attb").onclick=()=>$("file").click();
-$("file").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;pic=await shrink(f);drawPrev();upd()};
-$("in").oninput=()=>{$("in").style.height="auto";$("in").style.height=Math.min(140,$("in").scrollHeight)+"px";upd()};
-$("in").onkeydown=e=>{if(e.key=="Enter"&&!e.shiftKey&&matchMedia("(pointer:fine)").matches){e.preventDefault();send()}};
-async function send(){
-if(busy)return;const t=$("in").value.trim();if(!t&&!pic)return;
-if(t&&bad(t)){$("in").value="";$("in").style.height="auto";add("s",tr("bad"));upd();return}
-const img=pic;$("in").value="";$("in").style.height="auto";pic=null;drawPrev();
-add("u",t,img);busy=true;upd();
-hist.push({role:"user",content:img?[{type:"text",text:t||"Describe this image."},{type:"image_url",image_url:{url:img}}]:t});
-const w=add("a","");w.innerHTML='<span class="dots"><i></i><i></i><i></i></span>';
-const prep=hist.slice(-8).map((m,i,a)=>(Array.isArray(m.content)&&i<a.length-1)?{role:m.role,content:m.content[0].text}:m);
-const body=JSON.stringify({messages:[{role:"system",content:SYS+lang}].concat(prep)});
-let out="";
-try{
-const r=await fetch("/api/stream",{method:"POST",headers:{"Content-Type":"application/json"},body:body});
-const ct=r.headers.get("content-type")||"";
-if(ct.includes("json")){const j=await r.json();if(j.blocked){w.className="m s";w.textContent=tr("bad");hist.pop();busy=false;upd();return}}
-else{const rd=r.body.getReader(),dc=new TextDecoder();
-while(true){const x=await rd.read();if(x.done)break;const c=dc.decode(x.value,{stream:true});
-if(c.includes("\u0000ERR"))break;
-if(!out)w.textContent="";out+=c;w.textContent=out;$("msgs").scrollTop=1e9}}
-if(!out){const r2=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:body});const j=await r2.json();if(j.reply)out=j.reply;w.textContent=out||tr("err")}
-if(out)hist.push({role:"assistant",content:out});else hist.pop();
-}catch(x){w.textContent=out||tr("err");if(!out)hist.pop()}
-busy=false;upd()}
-$("send").onclick=send;
+    <!-- شاشة الأذكار مع التبويبات -->
+    <div id="athkar-screen">
+        <div class="chat-header"><button onclick="closeAthkar()"><i class="fa-solid fa-arrow-right"></i></button><h2 style="font-size: 18px; color: #333;">الأذكار</h2></div>
+        
+        <div class="athkar-tabs">
+            <div class="athkar-tab active" onclick="switchAthkarTab('morning', this)">الصباح</div>
+            <div class="athkar-tab" onclick="switchAthkarTab('evening', this)">المساء</div>
+            <div class="athkar-tab" onclick="switchAthkarTab('sleep', this)">النوم</div>
+        </div>
 
-/* ---------- weather ---------- */
-const WK=c=>c==0?["☀️","cl"]:c<3?["⛅","pc"]:c==3?["☁️","cd"]:c<50?["🌫️","fg"]:c<60?["🌦️","dz"]:c<70?["🌧️","rn"]:c<80?["❄️","sn"]:c<90?["🌧️","rn"]:["⛈️","st"];
-async function weather(){
-const c=$("wc").value.trim(),r=$("wr").value.trim();if(!r&&!c)return;
-$("wout").textContent="⏳ ...";
-try{
-const gl=["ar","fr"].includes(lang)?lang:"en";
-let g=await (await fetch("https://geocoding-api.open-meteo.com/v1/search?count=10&language="+gl+"&name="+encodeURIComponent(r||c))).json();
-let res=g.results||[];
-if(c&&r){const f=res.filter(x=>((x.country||"")+" "+(x.admin1||"")).toLowerCase().includes(c.toLowerCase())||(x.country_code||"").toLowerCase()==c.toLowerCase());if(f.length)res=f}
-if(!res.length){$("wout").textContent=tr("nf");return}
-const p=res[0];
-const w=await (await fetch("https://api.open-meteo.com/v1/forecast?latitude="+p.latitude+"&longitude="+p.longitude+"&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto&forecast_days=7")).json();
-sv("wcity",{c:c,r:r});
-const cu=w.current,d=w.daily,k=WK(cu.weather_code);
-let h='<div class="glass cur"><div>📍 '+p.name+(p.country?", "+p.country:"")+'</div><div class="t">'+Math.round(cu.temperature_2m)+'°</div><div style="font-size:20px">'+k[0]+" "+tr(k[1])+'</div><div>💧 '+cu.relative_humidity_2m+'%  💨 '+Math.round(cu.wind_speed_10m)+' km/h</div></div>';
-d.time.forEach((t,i)=>{const x=WK(d.weather_code[i]);h+='<div class="glass day"><span>'+new Date(t+"T12:00").toLocaleDateString(lang||"en",{weekday:"short"})+'</span><span class="i">'+x[0]+'</span><span>💧'+(d.precipitation_probability_max[i]||0)+'%</span><span>'+Math.round(d.temperature_2m_max[i])+'° / '+Math.round(d.temperature_2m_min[i])+'°</span></div>'});
-const o=[],mx=Math.max(...d.temperature_2m_max),mn=Math.min(...d.temperature_2m_min);
-if(mx>=35)o.push("tHot");if(mn<=5)o.push("tCold");if(d.precipitation_probability_max.some(x=>x>=50))o.push("tRain");if(d.weather_code.some(x=>x>=95))o.push("tStorm");if(Math.max(...d.uv_index_max)>=7)o.push("tUv");if(!o.length)o.push("tOk");
-h+='<p class="h3">'+tr("tips")+'</p>';o.forEach(x=>h+='<div class="glass tip">'+tr(x)+'</div>');
-$("wout").innerHTML=h}catch(e){$("wout").textContent=tr("err")}}
-$("wgo").onclick=weather;$("wr").onkeydown=e=>{if(e.key=="Enter")weather()};
-try{const s=JSON.parse(localStorage.getItem("wcity")||"null");if(s){$("wc").value=s.c;$("wr").value=s.r}}catch(e){}
+        <div class="athkar-container" id="athkar-list">
+            <!-- سيتم ملؤها بالجافاسكريبت -->
+        </div>
+    </div>
 
-/* ---------- prayer ---------- */
-const PN=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
-let ptimes=null,ptimers=[];
-const pname=n=>lang=="ar"?T.ar[n]:n;
-function schedule(){
-ptimers.forEach(clearTimeout);ptimers=[];if(!ptimes)return;
-const bf=+$("pb").value,now=Date.now();
-PN.forEach(n=>{const hm=ptimes[n].split(":"),d=new Date();d.setHours(+hm[0],+hm[1],0,0);const t=d.getTime();
-if(bf>0&&t-bf*60000>now)ptimers.push(setTimeout(()=>fire("🕌",pname(n)+" — "+tr("pbef").replace("{n}",bf)),t-bf*60000-now));
-if(t>now)ptimers.push(setTimeout(()=>fire("🕌",pname(n)+" — "+tr("pnow")),t-now))})}
-function drawPrayer(){
-if(!ptimes)return;const now=new Date();let nx=null;
-PN.forEach(n=>{const hm=ptimes[n].split(":"),d=new Date();d.setHours(+hm[0],+hm[1],0,0);if(!nx&&d>now)nx=n});
-let h="";PN.forEach(n=>h+='<div class="glass pr'+(n==nx?" nx":"")+'"><span>'+pname(n)+'</span><b>'+ptimes[n]+'</b></div>');$("pout").innerHTML=h}
-async function prayer(){
-const c=$("pc").value.trim(),r=$("pr").value.trim();if(!c||!r)return;
-$("pout").textContent="⏳ ...";
-try{const j=await (await fetch("https://api.aladhan.com/v1/timingsByCity?method=3&city="+encodeURIComponent(r)+"&country="+encodeURIComponent(c))).json();
-if(!j.data||!j.data.timings){$("pout").textContent=tr("nf");return}
-ptimes={};PN.forEach(n=>ptimes[n]=j.data.timings[n].slice(0,5));
-sv("pcity",{c:c,r:r});drawPrayer();schedule()}catch(e){$("pout").textContent=tr("err")}}
-$("pgo").onclick=prayer;$("pb").onchange=schedule;
-try{const s=JSON.parse(localStorage.getItem("pcity")||"null");if(s){$("pc").value=s.c;$("pr").value=s.r;prayer()}}catch(e){}
+    <script>
+        let userName = localStorage.getItem('userName') || "";
 
-/* ---------- start ---------- */
-apply();
-const go=()=>{if($("splash").classList.contains("on"))show(lang?"home":"lang")};
-$("splash").onclick=go;setTimeout(go,4200);
-</script></body></html>
+        window.onload = () => {
+            if (userName) {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('welcome-user').innerText = `مرحباً ${userName}`;
+                const main = document.getElementById('main-screen');
+                main.style.display = 'block';
+                setTimeout(() => main.style.opacity = '1', 50);
+            }
+        };
+
+        function showLanguageScreen() { document.getElementById('splash-screen').style.display = 'none'; document.getElementById('lang-screen').style.display = 'flex'; }
+        function showNameScreen() { document.getElementById('lang-screen').style.display = 'none'; document.getElementById('name-screen').style.display = 'flex'; }
+        
+        function saveNameAndStart() {
+            const input = document.getElementById('username-input').value.trim();
+            if (!input) return alert("يرجى إدخال اسمك أولاً");
+            userName = input;
+            localStorage.setItem('userName', userName);
+            
+            document.getElementById('name-screen').style.display = 'none';
+            document.getElementById('welcome-user').innerText = `مرحباً ${userName}`;
+            const main = document.getElementById('main-screen');
+            main.style.display = 'block';
+            setTimeout(() => main.style.opacity = '1', 50);
+        }
+
+        function resetName() {
+            if(confirm("هل تريد تغيير اسمك؟")) {
+                localStorage.removeItem('userName');
+                location.reload();
+            }
+        }
+
+        function openChat() { document.getElementById('chat-screen').style.display = 'flex'; loadChatHistory(); }
+        function closeChat() { document.getElementById('chat-screen').style.display = 'none'; }
+        function openPrayer() { document.getElementById('prayer-screen').style.display = 'flex'; fetchLocationAndPrayer(); }
+        function closePrayer() { document.getElementById('prayer-screen').style.display = 'none'; }
+
+        // --- بيانات الأذكار ---
+        const athkarData = {
+            morning: [
+                { text: "أصبحنا وأصبح الملك لله، والحمد لله", target: 1 },
+                { text: "اللهم بك أصبحنا، وبك أمسينا، وبك نحيا، وبك نموت، وإليك النشور", target: 1 },
+                { text: "سبحان الله وبحمده", target: 100 },
+                { text: "لا إله إلا الله وحده لا شريك له", target: 10 },
+                { text: "أستغفر الله وأتوب إليه", target: 100 }
+            ],
+            evening: [
+                { text: "أمسينا وأمسى الملك لله، والحمد لله", target: 1 },
+                { text: "اللهم بك أمسينا، وبك أصبحنا، وبك نحيا، وبك نموت، وإليك المصير", target: 1 },
+                { text: "سبحان الله وبحمده", target: 100 },
+                { text: "لا إله إلا الله وحده لا شريك له", target: 10 },
+                { text: "أعوذ بكلمات الله التامات من شر ما خلق", target: 3 }
+            ],
+            sleep: [
+                { text: "باسمك اللهم أموت وأحيا", target: 1 },
+                { text: "اللهم أسلمت نفسي إليك، ووجهت وجهي إليك", target: 1 },
+                { text: "سبحان الله", target: 33 },
+                { text: "الحمد لله", target: 33 },
+                { text: "الله أكبر", target: 34 }
+            ]
+        };
+
+        let currentTab = 'morning';
+        let athkarCounts = JSON.parse(localStorage.getItem('athkarCounts')) || { morning: [], evening: [], sleep: [] };
+
+        // تهيئة العدادات إذا كانت فارغة
+        for (let key in athkarData) {
+            if (!athkarCounts[key] || athkarCounts[key].length !== athkarData[key].length) {
+                athkarCounts[key] = athkarData[key].map(() => 0);
+            }
+        }
+
+        function openAthkar() {
+            document.getElementById('athkar-screen').style.display = 'flex';
+            renderAthkar();
+        }
+        function closeAthkar() {
+            document.getElementById('athkar-screen').style.display = 'none';
+            localStorage.setItem('athkarCounts', JSON.stringify(athkarCounts));
+        }
+
+        function switchAthkarTab(tab, element) {
+            currentTab = tab;
+            document.querySelectorAll('.athkar-tab').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            renderAthkar();
+        }
+
+        function renderAthkar() {
+            const list = document.getElementById('athkar-list');
+            list.innerHTML = '';
+            const data = athkarData[currentTab];
+            
+            data.forEach((item, index) => {
+                const current = athkarCounts[currentTab][index] || 0;
+                const isDone = current >= item.target;
+                
+                const div = document.createElement('div');
+                div.className = `athkar-card ${isDone ? 'done' : ''}`;
+                div.innerHTML = `
+                    <div class="athkar-text">${item.text}</div>
+                    <div class="athkar-count" id="count-${currentTab}-${index}">${isDone ? '✓' : current + '/' + item.target}</div>
+                `;
+                div.onclick = () => incrementAthkar(index);
+                list.appendChild(div);
+            });
+        }
+
+        function incrementAthkar(index) {
+            const data = athkarData[currentTab];
+            if (athkarCounts[currentTab][index] < data[index].target) {
+                athkarCounts[currentTab][index]++;
+                if (navigator.vibrate) navigator.vibrate(40);
+                renderAthkar();
+                if (athkarCounts[currentTab][index] === data[index].target) {
+                    setTimeout(() => alert(`أحسنت! لقد أكملت: ${data[index].text}`), 100);
+                }
+            }
+        }
+
+        // --- دوال الدردشة ---
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+
+        function autoResize(textarea) { textarea.style.height = 'auto'; textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; }
+        
+        function loadChatHistory() {
+            chatMessages.innerHTML = '';
+            if (chatHistory.length === 0) addMessage('ai', `مرحباً ${userName}! كيف يمكنني مساعدتك اليوم؟`);
+            else chatHistory.forEach(msg => renderMessage(msg.role, msg.content));
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function renderMessage(role, content) {
+            const div = document.createElement('div');
+            div.className = `message ${role === 'user' ? 'user' : 'ai'}`;
+            if (Array.isArray(content)) {
+                content.forEach(part => {
+                    if (part.type === 'text') div.innerHTML += part.text;
+                    if (part.type === 'image_url') { const img = document.createElement('img'); img.src = part.image_url.url; div.appendChild(img); }
+                });
+            } else div.innerText = content;
+            
+            if (role !== 'user') {
+                const actions = document.createElement('div');
+                actions.className = 'message-actions';
+                actions.innerHTML = `
+                    <i class="fa-regular fa-copy" onclick="copyText(this)" title="نسخ"></i>
+                    <i class="fa-solid fa-rotate-right" onclick="regenerate()" title="إعادة"></i>
+                    <i class="fa-regular fa-thumbs-up" onclick="toggleLike(this)" title="لايك"></i>
+                    <i class="fa-regular fa-thumbs-down" onclick="toggleDislike(this)" title="ديسلايك"></i>
+                `;
+                div.appendChild(actions);
+            }
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addMessage(role, content) { chatHistory.push({ role, content }); localStorage.setItem('chatHistory', JSON.stringify(chatHistory)); renderMessage(role, content); }
+        function copyText(icon) { const text = icon.parentElement.parentElement.innerText.replace('نسخ', '').replace('إعادة', '').trim(); navigator.clipboard.writeText(text); icon.className = 'fa-solid fa-check'; setTimeout(() => icon.className = 'fa-regular fa-copy', 2000); }
+        function regenerate() { if (chatHistory.length < 2) return; chatHistory.pop(); localStorage.setItem('chatHistory', JSON.stringify(chatHistory)); chatMessages.innerHTML = ''; chatHistory.forEach(msg => renderMessage(msg.role, msg.content)); sendMessage(true); }
+        
+        function toggleLike(icon) { icon.classList.toggle('fa-solid'); icon.classList.toggle('fa-regular'); icon.classList.toggle('active-like'); const dislike = icon.nextElementSibling; if (dislike.classList.contains('active-dislike')) { dislike.classList.remove('fa-solid', 'active-dislike'); dislike.classList.add('fa-regular'); } }
+        function toggleDislike(icon) { icon.classList.toggle('fa-solid'); icon.classList.toggle('fa-regular'); icon.classList.toggle('active-dislike'); const like = icon.previousElementSibling; if (like.classList.contains('active-like')) { like.classList.remove('fa-solid', 'active-like'); like.classList.add('fa-regular'); } }
+
+        let currentImage = null;
+        function handleImage(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => { currentImage = e.target.result; addMessage('user', [{ type: 'text', text: 'صورة مرفقة' }, { type: 'image_url', image_url: { url: currentImage } }]); };
+            reader.readAsDataURL(file);
+        }
+        
+        async function sendMessage(isRegen = false) {
+            if (!isRegen) {
+                const text = chatInput.value.trim(); if (!text && !currentImage) return;
+                chatInput.value = ''; chatInput.style.height = 'auto';
+                if (text) {
+                    if (currentImage) { addMessage('user', [{ type: 'text', text: text }, { type: 'image_url', image_url: { url: currentImage } }]); currentImage = null; }
+                    else addMessage('user', text);
+                }
+            }
+            sendToServer();
+        }
+
+        async function sendToServer() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai';
+            loadingDiv.id = 'loading-msg';
+            loadingDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            let aiText = "";
+            let messageDiv = null;
+
+            try {
+                const response = await fetch('/api/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages: chatHistory, userName: userName })
+                });
+
+                document.getElementById('loading-msg')?.remove();
+                if (!response.ok) throw new Error("Server Error");
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+
+                messageDiv = document.createElement('div');
+                messageDiv.className = 'message ai';
+                chatMessages.appendChild(messageDiv);
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    if (chunk === "\x00ERR") throw new Error("API Error");
+                    aiText += chunk;
+                    messageDiv.innerText = aiText;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                if (aiText) {
+                    const actions = document.createElement('div');
+                    actions.className = 'message-actions';
+                    actions.innerHTML = `
+                        <i class="fa-regular fa-copy" onclick="copyText(this)" title="نسخ"></i>
+                        <i class="fa-solid fa-rotate-right" onclick="regenerate()" title="إعادة"></i>
+                        <i class="fa-regular fa-thumbs-up" onclick="toggleLike(this)" title="لايك"></i>
+                        <i class="fa-regular fa-thumbs-down" onclick="toggleDislike(this)" title="ديسلايك"></i>
+                    `;
+                    messageDiv.appendChild(actions);
+                    chatHistory.push({ role: 'ai', content: aiText });
+                    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                }
+            } catch (e) {
+                document.getElementById('loading-msg')?.remove();
+                if (messageDiv) messageDiv.remove();
+                addMessage('ai', 'تعذر الاتصال بالخادم.');
+            }
+        }
+        
+        async function fetchLocationAndPrayer() {
+            if (!navigator.geolocation) return alert("المتصفح لا يدعم تحديد الموقع");
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude; const lng = position.coords.longitude;
+                const prayerRes = await fetch('/api/prayer_times', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat, lng }) });
+                const prayerData = await prayerRes.json();
+                document.getElementById('prayer-list').innerHTML = `<div class="prayer-item"><span>الفجر</span><span>${prayerData.fajr}</span></div><div class="prayer-item"><span>الظهر</span><span>${prayerData.dhuhr}</span></div><div class="prayer-item"><span>العصر</span><span>${prayerData.asr}</span></div><div class="prayer-item"><span>المغرب</span><span>${prayerData.maghrib}</span></div><div class="prayer-item"><span>العشاء</span><span>${prayerData.isha}</span></div>`;
+                const qiblaRes = await fetch('/api/qibla', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat, lng }) });
+                const qiblaData = await qiblaRes.json();
+                document.getElementById('compass-needle').style.transform = `rotate(${qiblaData.qibla}deg)`;
+                document.getElementById('qibla-text').innerText = `${Math.round(qiblaData.qibla)}°`;
+                document.getElementById('next-prayer').innerText = `الظهر: ${prayerData.dhuhr}`;
+            }, (err) => alert("يرجى السماح بالوصول للموقع."));
+        }
+    </script>
+</body>
+</html>
