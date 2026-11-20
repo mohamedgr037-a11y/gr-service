@@ -1,107 +1,239 @@
-from flask import Flask, request, jsonify, send_from_directory, Response, stream_with_context
-import requests, re, os, json, math
-from datetime import datetime, timezone
-
-app = Flask(__name__, static_folder="static")
-KEY = "sk-WENkF2BdGtUp5CSs8rvEwg"
-URL = "https://app.ai-grid.io/v1/chat/completions"
-MODEL = "google/gemma-4-31B"
-BAD = {"fuck","shit","bitch","merde","putain","connard"}
-H = lambda: {"Content-Type": "application/json", "Authorization": "Bearer " + KEY}
-
-def is_bad(t): return bool(BAD & set(re.findall(r"\w+", t.lower())))
-
-@app.route("/")
-def home(): return send_from_directory("static", "index.html")
-
-@app.route("/sw.js")
-def sw(): return send_from_directory("static", "sw.js", mimetype="application/javascript")
-
-def clean(m):
-    c = m.get("content", "")
-    if isinstance(c, list):
-        parts = []
-        for p in c:
-            if p.get("type") == "text": parts.append({"type": "text", "text": str(p.get("text", ""))})
-            elif p.get("type") == "image_url":
-                u = (p.get("image_url") or {}).get("url", "")
-                if u.startswith("data:image/") and len(u) < 4_000_000: parts.append({"type": "image_url", "image_url": {"url": u}})
-        c = parts
-    return {"role": m.get("role", "user"), "content": c}
-
-def text_of(c):
-    if isinstance(c, list): return " ".join(p.get("text", "") for p in c if p.get("type") == "text")
-    return c or ""
-
-def get_msgs():
-    req_json = request.json or {}
-    msgs = [clean(m) for m in req_json.get("messages", [])][-20:]
-    user_name = req_json.get("userName", "")
-    
-    if user_name:
-        system_msg = {"role": "system", "content": f"أنت مساعد ذكي. اسم المستخدم الذي يتحدث معك هو {user_name}. رحب به باسمه في بداية المحادثة إذا كانت هذه أول رسالة، وتحدث معه بشكل ودي وشخصي."}
-        msgs.insert(0, system_msg)
+cat << 'EOF' > static/index.html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>G-R Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #f4f7fc; color: #333; overflow-x: hidden; }
+        #splash-screen, #lang-screen, #name-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s ease; }
+        #splash-screen { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); }
+        #lang-screen { background: #000; color: #fff; display: none; align-items: stretch; justify-content: flex-start; overflow-y: auto; }
+        #name-screen { background: #f4f7fc; display: none; }
+        .splash-logo { font-size: 60px; color: #4a6cf7; margin-bottom: 20px; animation: pulse 2s infinite; }
+        .splash-title { font-size: 28px; color: #2c3e50; font-weight: 700; margin-bottom: 10px; }
+        .splash-subtitle { font-size: 16px; color: #555; margin-bottom: 5px; }
+        .splash-subtitle.en { font-size: 14px; color: #777; direction: ltr; }
+        .splash-btn { margin-top: 30px; padding: 12px 30px; background: #4a6cf7; color: #fff; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(74, 108, 247, 0.4); transition: 0.2s; }
+        .splash-btn:active { transform: scale(0.95); }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .lang-header { padding: 60px 20px 20px; text-align: center; font-size: 34px; font-weight: 700; letter-spacing: 1px; animation: floatText 3s ease-in-out infinite; }
+        @keyframes floatText { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .lang-list { padding: 20px; display: flex; flex-direction: column; gap: 15px; width: 100%; }
+        .lang-item { background: rgba(255,255,255,0.1); padding: 15px 20px; border-radius: 15px; font-size: 18px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; }
+        .lang-item:active { background: rgba(255,255,255,0.3); }
+        .name-card { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 90%; max-width: 400px; }
+        .name-card h2 { color: #2c3e50; margin-bottom: 20px; }
+        .name-input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 15px; font-size: 16px; outline: none; margin-bottom: 20px; text-align: center; font-family: 'Tajawal'; }
+        .name-input:focus { border-color: #4a6cf7; }
+        #main-screen { display: none; opacity: 0; transition: opacity 0.5s; }
+        .header { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo i { font-size: 28px; color: #4a6cf7; }
+        .logo h1 { font-size: 20px; color: #2c3e50; }
+        .welcome-msg { font-size: 14px; color: #4a6cf7; font-weight: bold; margin-top: 5px; cursor: pointer; }
+        .avatar { width: 45px; height: 45px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4a6cf7; font-size: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; margin-top: 10px; }
+        .card { background: #fff; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(255,255,255,0.5); }
+        .card:active { transform: scale(0.97); }
+        .card i { font-size: 40px; margin-bottom: 10px; color: #4a6cf7; }
+        .card span { font-size: 15px; font-weight: 500; color: #444; }
+        .card.full-width { grid-column: span 2; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
+        #chat-screen, #prayer-screen, #athkar-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f9f9f9; z-index: 100; display: none; flex-direction: column; }
+        .chat-header { padding: 15px; background: #fff; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px; }
+        .chat-header button { background: none; border: none; font-size: 20px; color: #333; cursor: pointer; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; position: relative; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { background: #4a6cf7; color: #fff; align-self: flex-end; border-bottom-right-radius: 5px; }
+        .message.ai { background: #fff; color: #333; align-self: flex-start; border-bottom-left-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .message.ai img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
+        .typing-dots { display: flex; gap: 5px; align-items: center; justify-content: center; padding: 5px; }
+        .typing-dots span { width: 8px; height: 8px; background: #4a6cf7; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .message-actions { display: flex; gap: 15px; margin-top: 8px; opacity: 0.6; }
+        .message-actions i { cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .message-actions i:hover { color: #4a6cf7; }
+        .message-actions i.active-like { color: #27ae60 !important; opacity: 1; }
+        .message-actions i.active-dislike { color: #e74c3c !important; opacity: 1; }
+        .chat-input-area { padding: 10px 15px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: flex-end; gap: 10px; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; font-family: inherit; font-size: 15px; max-height: 120px; min-height: 40px; resize: none; outline: none; transition: height 0.1s; overflow-y: hidden; }
+        .chat-input:focus { border-color: #4a6cf7; }
+        .action-btn { background: #4a6cf7; color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; }
+        .action-btn:hover { background: #3b5bdb; }
+        .action-btn.secondary { background: #f0f0f0; color: #555; }
+        .prayer-list { background: #fff; border-radius: 15px; padding: 20px; margin: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .prayer-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; font-size: 16px; }
+        .prayer-item:last-child { border-bottom: none; }
+        .prayer-item span:first-child { font-weight: bold; color: #444; }
+        .prayer-item span:last-child { color: #4a6cf7; font-weight: bold; }
+        .compass-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .compass { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #4a6cf7; position: relative; display: flex; align-items: center; justify-content: center; background: #fff; box-shadow: inset 0 0 20px rgba(0,0,0,0.1); }
+        .compass-needle { width: 4px; height: 80px; background: red; position: absolute; bottom: 50%; transform-origin: bottom center; transition: transform 0.5s ease-out; }
+        .compass-center { width: 12px; height: 12px; background: #4a6cf7; border-radius: 50%; position: absolute; }
+        .qibla-text { margin-top: 15px; font-size: 18px; font-weight: bold; color: #4a6cf7; }
+        .athkar-tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; }
+        .athkar-tab { flex: 1; text-align: center; padding: 15px; font-size: 16px; font-weight: bold; color: #777; cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .athkar-tab.active { color: #4a6cf7; border-bottom-color: #4a6cf7; }
+        .athkar-container { padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; flex: 1; }
+        .athkar-card { background: #fff; border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s; border: 1px solid #eee; }
+        .athkar-card:active { transform: scale(0.98); background: #f9f9f9; }
+        .athkar-text { font-size: 18px; font-weight: 700; color: #2c3e50; line-height: 1.6; }
+        .athkar-count { width: 50px; height: 50px; flex-shrink: 0; background: #e0eafc; color: #4a6cf7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; margin-right: 15px; }
+        .athkar-card.done { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div id="splash-screen">
+        <i class="fa-solid fa-handshake-angle splash-logo"></i>
+        <div class="splash-title">تطبيق G-R Service</div>
+        <div class="splash-subtitle">مرحباً بكم، التطبيق تحت التطوير</div>
+        <div class="splash-subtitle en">Welcome to G-R Service</div>
+        <button class="splash-btn" onclick="showLanguageScreen()">ابدأ / Start</button>
+    </div>
+    <div id="lang-screen">
+        <div class="lang-header">Welcome</div>
+        <div class="lang-list">
+            <div class="lang-item" onclick="showNameScreen()"><span>العربية</span><i class="fa-solid fa-check"></i></div>
+            <div class="lang-item" onclick="showNameScreen()"><span>English</span><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+    </div>
+    <div id="name-screen">
+        <div class="name-card">
+            <h2>ما هو اسمك؟</h2>
+            <input type="text" id="username-input" class="name-input" placeholder="أدخل اسمك هنا...">
+            <button class="splash-btn" style="width: 100%;" onclick="saveNameAndStart()">دخول</button>
+        </div>
+    </div>
+    <div id="main-screen">
+        <div class="header">
+            <div class="logo">
+                <i class="fa-solid fa-handshake-angle"></i>
+                <div>
+                    <h1>G-R Service</h1>
+                    <div class="welcome-msg" id="welcome-user" onclick="resetName()">تغيير الاسم</div>
+                </div>
+            </div>
+            <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        </div>
+        <div class="grid-container">
+            <div class="card" onclick="openAthkar()"><i class="fa-solid fa-hands-praying" style="color: #9b59b6;"></i><span>عداد الأذكار</span></div>
+            <div class="card" onclick="alert('قريباً')"><i class="fa-regular fa-clock" style="color: #e74c3c;"></i><span>المنبه</span></div>
+            <div class="card" onclick="openChat()"><i class="fa-solid fa-robot" style="color: #3498db;"></i><span>دردشة مع الذكاء</span></div>
+            <div class="card" id="weather-card" onclick="getWeather()"><i class="fa-solid fa-cloud-sun" style="color: #f1c40f;"></i><span id="weather-temp">الطقس</span></div>
+            <div class="card full-width" onclick="openPrayer()"><i class="fa-solid fa-mosque" style="color: #27ae60;"></i><span>أوقات الصلاة والأذان</span><div class="prayer-info" id="next-prayer">اضغط للعرض</div></div>
+        </div>
+    </div>
+    <div id="chat-screen">
+        <div class="chat-header"><button onclick="closeChat()"><i class="fa-solid fa-arrow-right"></i></button><h2 style="font-size: 18px; color: #333;">المساعد الذكي</h2></div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+            <button class="action-btn secondary" onclick="document.getElementById('file-input').click()"><i class="fa-solid fa-image"></i></button>
+            <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleImage(event)">
+            <textarea id="chat-input" class="chat-input" placeholder="اكتب رسالتك..." rows="1" oninput="autoResize(this)"></textarea>
+            <button class="action-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <div id="prayer-screen">
+        <div class="chat-header"><button onclick="closePrayer()"><i class="fa-solid fa-arrow-right"></i></button><h2 style="font-size: 18px; color: #333;">أوقات الصلاة والقبلة</h2></div>
+        <div class="prayer-list" id="prayer-list"></div>
+        <div class="compass-container"><h3>اتجاه القبلة</h3><div class="compass"><div class="compass-needle" id="compass-needle"></div><div class="compass-center"></div></div><div class="qibla-text" id="qibla-text">--°</div></div>
+    </div>
+    <div id="athkar-screen">
+        <div class="chat-header"><button onclick="closeAthkar()"><i class="fa-solid fa-arrow-right"></i></button><h2 style="font-size: 18px; color: #333;">الأذكار</h2></div>
+        <div class="athkar-tabs">
+            <div class="athkar-tab active" onclick="switchAthkarTab('morning', this)">الصباح</div>
+            <div class="athkar-tab" onclick="switchAthkarTab('evening', this)">المساء</div>
+            <div class="athkar-tab" onclick="switchAthkarTab('sleep', this)">النوم</div>
+        </div>
+        <div class="athkar-container" id="athkar-list"></div>
+    </div>
+    <script>
+        let userName = localStorage.getItem('userName') || "";
+        window.onload = () => { if (userName) { document.getElementById('splash-screen').style.display = 'none'; document.getElementById('welcome-user').innerText = `مرحباً ${userName}`; const main = document.getElementById('main-screen'); main.style.display = 'block'; setTimeout(() => main.style.opacity = '1', 50); } };
+        function showLanguageScreen() { document.getElementById('splash-screen').style.display = 'none'; document.getElementById('lang-screen').style.display = 'flex'; }
+        function showNameScreen() { document.getElementById('lang-screen').style.display = 'none'; document.getElementById('name-screen').style.display = 'flex'; }
+        function saveNameAndStart() { const input = document.getElementById('username-input').value.trim(); if (!input) return alert("يرجى إدخال اسمك"); userName = input; localStorage.setItem('userName', userName); document.getElementById('name-screen').style.display = 'none'; document.getElementById('welcome-user').innerText = `مرحباً ${userName}`; const main = document.getElementById('main-screen'); main.style.display = 'block'; setTimeout(() => main.style.opacity = '1', 50); }
+        function resetName() { if(confirm("تغيير الاسم؟")) { localStorage.removeItem('userName'); location.reload(); } }
+        function openChat() { document.getElementById('chat-screen').style.display = 'flex'; loadChatHistory(); }
+        function closeChat() { document.getElementById('chat-screen').style.display = 'none'; }
+        function openPrayer() { document.getElementById('prayer-screen').style.display = 'flex'; fetchLocationAndPrayer(); }
+        function closePrayer() { document.getElementById('prayer-screen').style.display = 'none'; }
+        const athkarData = { morning: [{ text: "أصبحنا وأصبح الملك لله", target: 1 }, { text: "سبحان الله وبحمده", target: 100 }], evening: [{ text: "أمسينا وأمسى الملك لله", target: 1 }, { text: "أعوذ بكلمات الله التامات", target: 3 }], sleep: [{ text: "باسمك اللهم أموت وأحيا", target: 1 }, { text: "سبحان الله", target: 33 }] };
+        let currentTab = 'morning'; let athkarCounts = JSON.parse(localStorage.getItem('athkarCounts')) || { morning: [], evening: [], sleep: [] };
+        for (let key in athkarData) { if (!athkarCounts[key] || athkarCounts[key].length !== athkarData[key].length) { athkarCounts[key] = athkarData[key].map(() => 0); } }
+        function openAthkar() { document.getElementById('athkar-screen').style.display = 'flex'; renderAthkar(); }
+        function closeAthkar() { document.getElementById('athkar-screen').style.display = 'none'; localStorage.setItem('athkarCounts', JSON.stringify(athkarCounts)); }
+        function switchAthkarTab(tab, element) { currentTab = tab; document.querySelectorAll('.athkar-tab').forEach(el => el.classList.remove('active')); element.classList.add('active'); renderAthkar(); }
+        function renderAthkar() { const list = document.getElementById('athkar-list'); list.innerHTML = ''; const data = athkarData[currentTab]; data.forEach((item, index) => { const current = athkarCounts[currentTab][index] || 0; const isDone = current >= item.target; const div = document.createElement('div'); div.className = `athkar-card ${isDone ? 'done' : ''}`; div.innerHTML = `<div class="athkar-text">${item.text}</div><div class="athkar-count">${isDone ? '✓' : current + '/' + item.target}</div>`; div.onclick = () => incrementAthkar(index); list.appendChild(div); }); }
+        function incrementAthkar(index) { const data = athkarData[currentTab]; if (athkarCounts[currentTab][index] < data[index].target) { athkarCounts[currentTab][index]++; if (navigator.vibrate) navigator.vibrate(40); renderAthkar(); } }
+        const chatInput = document.getElementById('chat-input'); const chatMessages = document.getElementById('chat-messages'); let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+        function autoResize(textarea) { textarea.style.height = 'auto'; textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; }
+        function loadChatHistory() { chatMessages.innerHTML = ''; if (chatHistory.length === 0) addMessage('ai', `مرحباً ${userName}!`); else chatHistory.forEach(msg => renderMessage(msg.role, msg.content)); chatMessages.scrollTop = chatMessages.scrollHeight; }
+        function renderMessage(role, content) { const div = document.createElement('div'); div.className = `message ${role === 'user' ? 'user' : 'ai'}`; if (Array.isArray(content)) { content.forEach(part => { if (part.type === 'text') div.innerHTML += part.text; if (part.type === 'image_url') { const img = document.createElement('img'); img.src = part.image_url.url; div.appendChild(img); } }); } else div.innerText = content; chatMessages.appendChild(div); chatMessages.scrollTop = chatMessages.scrollHeight; }
+        function addMessage(role, content) { chatHistory.push({ role, content }); localStorage.setItem('chatHistory', JSON.stringify(chatHistory)); renderMessage(role, content); }
+        let currentImage = null;
+        function handleImage(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { currentImage = e.target.result; addMessage('user', [{ type: 'text', text: 'صورة مرفقة' }, { type: 'image_url', image_url: { url: currentImage } }]); }; reader.readAsDataURL(file); }
+        async function sendMessage() { const text = chatInput.value.trim(); if (!text && !currentImage) return; chatInput.value = ''; chatInput.style.height = 'auto'; if (text) { if (currentImage) { addMessage('user', [{ type: 'text', text: text }, { type: 'image_url', image_url: { url: currentImage } }]); currentImage = null; } else addMessage('user', text); } sendToServer(); }
         
-    return msgs, (text_of(msgs[-1]["content"]) if msgs else "")
+        async function sendToServer() {
+            const loadingDiv = document.createElement('div'); loadingDiv.className = 'message ai'; loadingDiv.id = 'loading-msg'; loadingDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>'; chatMessages.appendChild(loadingDiv); chatMessages.scrollTop = chatMessages.scrollHeight;
+            let aiText = ""; let messageDiv = null;
+            try {
+                const response = await fetch('/api/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: chatHistory, userName: userName }) });
+                document.getElementById('loading-msg')?.remove(); if (!response.ok) throw new Error("Server Error");
+                const reader = response.body.getReader(); const decoder = new TextDecoder("utf-8");
+                messageDiv = document.createElement('div'); messageDiv.className = 'message ai'; chatMessages.appendChild(messageDiv);
+                while (true) {
+                    const { done, value } = await reader.read(); if (done) break;
+                    const chunk = decoder.decode(value, { stream: true }); if (chunk === "\x00ERR") throw new Error("API Error");
+                    aiText += chunk; messageDiv.innerText = aiText; chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+                if (aiText) { chatHistory.push({ role: 'ai', content: aiText }); localStorage.setItem('chatHistory', JSON.stringify(chatHistory)); }
+            } catch (e) { document.getElementById('loading-msg')?.remove(); if (messageDiv) messageDiv.remove(); addMessage('ai', 'تعذر الاتصال بالخادم.'); }
+        }
+        
+        async function fetchLocationAndPrayer() {
+            if (!navigator.geolocation) return alert("المتصفح لا يدعم تحديد الموقع");
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude; const lng = position.coords.longitude;
+                const prayerRes = await fetch('/api/prayer_times', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat, lng }) });
+                const prayerData = await prayerRes.json();
+                document.getElementById('prayer-list').innerHTML = `<div class="prayer-item"><span>الفجر</span><span>${prayerData.fajr}</span></div><div class="prayer-item"><span>الظهر</span><span>${prayerData.dhuhr}</span></div><div class="prayer-item"><span>العصر</span><span>${prayerData.asr}</span></div><div class="prayer-item"><span>المغرب</span><span>${prayerData.maghrib}</span></div><div class="prayer-item"><span>العشاء</span><span>${prayerData.isha}</span></div>`;
+                const qiblaRes = await fetch('/api/qibla', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat, lng }) });
+                const qiblaData = await qiblaRes.json();
+                document.getElementById('compass-needle').style.transform = `rotate(${qiblaData.qibla}deg)`; document.getElementById('qibla-text').innerText = `${Math.round(qiblaData.qibla)}°`;
+                document.getElementById('next-prayer').innerText = `الظهر: ${prayerData.dhuhr}`;
+            }, (err) => alert("يرجى السماح بالوصول للموقع."));
+        }
 
-@app.route("/api/chat", methods=["POST"])
-def chat():
-    msgs, last = get_msgs()
-    if is_bad(last): return jsonify({"blocked": True})
-    try:
-        r = requests.post(URL, timeout=120, headers=H(), json={"model": MODEL, "messages": msgs, "max_tokens": 1000, "temperature": 0.2})
-        return jsonify({"reply": r.json()["choices"][0]["message"]["content"]})
-    except Exception as e: return jsonify({"error": str(e)}), 500
-
-@app.route("/api/stream", methods=["POST"])
-def stream():
-    msgs, last = get_msgs()
-    if is_bad(last): return jsonify({"blocked": True})
-    def gen():
-        try:
-            with requests.post(URL, stream=True, timeout=120, headers=H(), json={"model": MODEL, "messages": msgs, "max_tokens": 1000, "temperature": 0.2, "stream": True}) as r:
-                if r.status_code != 200: yield "\x00ERR"; return
-                r.encoding = "utf-8"
-                for line in r.iter_lines(decode_unicode=True):
-                    if not line or not line.startswith("data:"): continue
-                    d = line[5:].strip()
-                    if d == "[DONE]": break
-                    try: c = json.loads(d)["choices"][0]["delta"].get("content")
-                    except Exception: continue
-                    if c: yield c
-        except Exception: yield "\x00ERR"
-    return Response(stream_with_context(gen()), mimetype="text/plain", headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"})
-
-@app.route("/api/prayer_times", methods=["POST"])
-def prayer_times():
-    data = request.json; lat, lng = data.get("lat"), data.get("lng")
-    if lat is None or lng is None: return jsonify({"error": "Location required"}), 400
-    now = datetime.now(timezone.utc); day_of_year = now.timetuple().tm_yday
-    declination = 23.45 * math.sin(math.radians(360/365 * (284 + day_of_year)))
-    B = math.radians((360/365) * (day_of_year - 81))
-    eq_time = 9.87 * math.sin(2*B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
-    solar_noon = 12 - (lng / 15) - (eq_time / 60)
-    fajr_angle = 18; isha_angle = 17
-    fajr_hour = solar_noon - (math.degrees(math.acos(math.sin(math.radians(-fajr_angle)) / math.cos(math.radians(lat)) * math.cos(math.radians(declination)))) / 15)
-    isha_hour = solar_noon + (math.degrees(math.acos(math.sin(math.radians(-isha_angle)) / math.cos(math.radians(lat)) * math.cos(math.radians(declination)))) / 15)
-    def fmt(h):
-        if math.isnan(h): return "--:--"
-        hr = int(h); mn = int((h - hr) * 60); ampm = "ص" if hr < 12 else "م"
-        hr12 = hr if hr <= 12 else hr - 12
-        if hr12 == 0: hr12 = 12
-        return f"{hr12}:{mn:02d} {ampm}"
-    return jsonify({"fajr": fmt(fajr_hour), "dhuhr": fmt(solar_noon), "asr": fmt(solar_noon + 3.5), "maghrib": fmt(solar_noon + 6), "isha": fmt(isha_hour)})
-
-@app.route("/api/qibla", methods=["POST"])
-def qibla():
-    data = request.json; lat, lng = data.get("lat"), data.get("lng")
-    if lat is None or lng is None: return jsonify({"error": "Location required"}), 400
-    kaaba_lat, kaaba_lng = 21.4225, 39.8262
-    phi1 = math.radians(lat); phi2 = math.radians(kaaba_lat); delta_lambda = math.radians(kaaba_lng - lng)
-    x = math.sin(delta_lambda) * math.cos(phi2)
-    y = math.cos(phi1) * math.sin(phi2) - math.sin(phi1) * math.cos(phi2) * math.cos(delta_lambda)
-    bearing = (math.degrees(math.atan2(x, y)) + 360) % 360
-    return jsonify({"qibla": bearing})
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+        // --- دالة الطقس الجديدة ---
+        async function getWeather() {
+            if (!navigator.geolocation) return alert("المتصفح لا يدعم تحديد الموقع");
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude; const lng = position.coords.longitude;
+                document.getElementById('weather-temp').innerText = 'جاري التحميل...';
+                try {
+                    const res = await fetch('/api/weather', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat, lng }) });
+                    const data = await res.json();
+                    if (data.temp !== undefined) { document.getElementById('weather-temp').innerText = `${data.temp}°C`; } 
+                    else { document.getElementById('weather-temp').innerText = 'خطأ'; }
+                } catch (e) { document.getElementById('weather-temp').innerText = 'تعذر الاتصال'; }
+            }, (err) => alert("يرجى السماح بالوصول للموقع."));
+        }
+        
+        // --- تفعيل تمدد شريط الكتابة ---
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+</body>
+</html>
+EOF
